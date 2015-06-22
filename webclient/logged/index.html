@@ -7,15 +7,15 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" href="../favicon.ico">
 
     <title>BitBat</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="style.css" rel="stylesheet">
+    <link href="../style.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -26,7 +26,7 @@
 
   <body>
 
-    <div class="navbar-wrapper">
+      <div class="navbar-wrapper">
       <div class="container">
 
         <nav class="navbar navbar-inverse navbar-static-top">
@@ -43,9 +43,35 @@
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
                 <li class="active"><a href="index.html">Inicio</a></li>
-				<li><a href="registro.php">Registro</a></li>
-                <li><a href="acercade.html">Acerca de</a></li>
-                <li><a href="contactanos.html">Contáctanos</a></li>
+				<li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cuentas <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Crear</a></li>
+                    <li><a href="#">Visualizar</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">Movimientos</li>
+                    <li><a href="#">Depósito</a></li>
+                    <li><a href="#">Retiro</a></li>
+					<li><a href="#">Transferencia</a></li>
+                  </ul>
+                </li>
+				<li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seguros <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Contratar</a></li>
+                    <li><a href="#">Realizar pago</a></li>
+					<li><a href="#">Visualizar</a></li>
+                  </ul>
+                </li>
+				<li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Préstamos <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Solicitar</a></li>
+                    <li><a href="#">Realizar pago</a></li>
+					<li><a href="#">Visualizar</a></li>
+                  </ul>
+                </li>
+				<li><a href="index.html">Cerrar sesión</a></li>
               </ul>
             </div>
           </div>
@@ -54,20 +80,12 @@
       </div>
     </div>
 	
-	
     <div class="container">
-	
-		<div class="jumbotron">
-		  <div class="container">
-			<h1>Bienivenido!</h1>
-			<p class="lead">Estamos para hacerte crecer. Mediante el crecimiento económico de día a día hacemos de nuestra organización un lugar mejor para que guardes tu dinero.<br> Cuidamos de ti.</p>
-		  </div>
-		</div>
-		
+
       <form class="form-signin">
-        <h2 class="form-signin-heading">Inicia sesión</h2>
-        <label for="inputUsuario" class="sr-only">Usuario</label>
-        <input type="text" id="inputUsuario" class="form-control" placeholder="Usuario" required autofocus>
+        <h2 class="form-signin-heading">Bienvenido</h2>
+        <label for="inputEmail" class="sr-only">Usuario</label>
+        <input type="email" id="inputEmail" class="form-control" placeholder="Usuario" required autofocus>
         <label for="inputPassword" class="sr-only">Contraseña</label>
         <input type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required>
         <div class="checkbox">
@@ -88,6 +106,6 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
   </body>
 </html>

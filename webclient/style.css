@@ -46,3 +46,15 @@ form {
   padding: 15px;
   margin: 0 auto;
 }
+form .form-heading,
+form .checkbox {
+  margin-bottom: 10px;
+}
+form button{
+	margin-top: 5px;
+}
+
+/*JUMBOTRON*/
+.jumbotron{
+	background-color: #DADADA;
+}
