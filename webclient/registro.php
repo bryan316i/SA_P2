@@ -42,8 +42,8 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="index.html">Inicio</a></li>
-				<li><a href="registro.php">Registro</a></li>
+                <li><a href="index.html">Inicio</a></li>
+				<li class="active"><a href="registro.php">Registro</a></li>
                 <li><a href="acercade.html">Acerca de</a></li>
                 <li><a href="contactanos.html">Contáctanos</a></li>
               </ul>
@@ -56,18 +56,30 @@
 	
     <div class="container">
 
-      <form class="form-signin">
-        <h2 class="form-signin-heading">Bienvenido</h2>
-        <label for="inputEmail" class="sr-only">Usuario</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="Usuario" required autofocus>
+      <form class="form-registro">
+        <h2 class="form-registro-heading">Regístrate</h2>
+        <label for="inputNombres" class="sr-only">Nombres</label>
+		<input type="text" id="inputNombres" class="form-control" placeholder="Nombres" required autofocus>
+		<label for="inputApellidos" class="sr-only">Apellidos</label>
+		<input type="text" id="inputApellidos" class="form-control" placeholder="Apellidos" required>
+		<label for="inputEmail" class="sr-only">Correo electrónico</label>
+		<input type="email" id="inputEmail" class="form-control" placeholder="Correo electrónico" required>
+		<label for="inputTelefono" class="sr-only">Teléfono</label>
+		<input type="number" id="inputTelefono" class="form-control" placeholder="Teléfono" required>
+		<label for="inputDireccion" class="sr-only">Dirección</label>
+		<input type="text" id="inputDireccion" class="form-control" placeholder="Dirección" required>
         <label for="inputPassword" class="sr-only">Contraseña</label>
         <input type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" value="remember-me"> Recordarme
-          </label>
-        </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar sesión</button>
+		<label for="inputConfirmarPassword" class="sr-only">Confirmar contraseña</label>
+        <input type="password" id="inputConfirmarPassword" class="form-control" placeholder="Confirmar contraseña" required>
+        <select class="form-control" id="inputDocIdentificacion">
+			<option>DPI</option>
+			<option>Licencia</option>
+		</select>
+		<input type="text" id="inputDocIdentificacion" class="form-control" placeholder="Documento de identificación" required>
+		<label for="inputNumDocIdentificacion" class="sr-only">Documento de identificación</label>
+		<input type="number" id="inputNumDocIdentificacion" class="form-control" placeholder="Número de documento" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Registrarse</button>
       </form>
 
 	  <footer>
