@@ -6,6 +6,15 @@ $server = new nusoap_server;
 $server->configureWSDL('server', 'urn:server');
 $server->wsdl->schemaTargetNamespace = 'urn:server';
 
+$server->wsdl->addComplexType('ArrayInt',
+	'complexType',
+	'array',
+	'',
+	'SOAP-ENC:Array',
+	array(),
+	array(
+	array('ref'=>'SOAP-ENC:arrayType','wsdl:arrayType'=>'xsd:int[]')),
+	'xsd:int');
 
 $server->wsdl->addComplexType(
     'IdsDocumentoIdentificacion',
@@ -15,7 +24,7 @@ $server->wsdl->addComplexType(
     '',
     array(
         'cantidad' => array('name' => 'cantidad', 'type' => 'xsd:int'),
-        'ids' => array('name' => 'array', 'type' => 'xsd:int[]')
+        'ids' => array('name' => 'array', 'type' => 'tns:ArrayInt')
     )
 );
 

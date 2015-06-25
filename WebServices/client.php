@@ -2,7 +2,7 @@
 require_once('lib/nusoap.php');
 
 //This is your webservice server WSDL URL address
-$wsdl = "http://localhost/SA_WebServices/server.php?wsdl";
+$wsdl = "http://localhost/WebServices/server.php?wsdl";
 
 //create client object
 $client = new nusoap_client($wsdl, 'wsdl');
