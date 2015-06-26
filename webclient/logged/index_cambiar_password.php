@@ -30,7 +30,7 @@ require_once( '../classes/Admon.php' );
 session_start();
 if( isset( $_SESSION['admon'] ) ){
 }else{
-	header( 'Location: ..');
+	//header( 'Location: ..');
 }
 ?>
       <div class="navbar-wrapper">
@@ -45,40 +45,11 @@ if( isset( $_SESSION['admon'] ) ){
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="index.php">BitBat</a>
+              <a class="navbar-brand" href="#">BitBat</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="index.php">Inicio</a></li>
-				<li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cuentas <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="cuenta_crear.php">Crear</a></li>
-                    <li><a href="cuentas_visualizar.php">Visualizar</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li class="dropdown-header">Movimientos</li>
-                    <li><a href="cuenta_deposito.php">Depósito</a></li>
-                    <li><a href="cuenta_retiro.php">Retiro</a></li>
-					<li><a href="cuenta_transferencia.php">Transferencia</a></li>
-                  </ul>
-                </li>
-				<li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seguros <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="seguro_contratar_seleccion.php">Contratar</a></li>
-                    <li><a href="seguro_pagar_seleccion_cuenta.php">Realizar pago</a></li>
-					<li><a href="seguros_visualizar.php">Visualizar</a></li>
-                  </ul>
-                </li>
-				<li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Préstamos <span class="caret"></span></a>
-                  <ul class="dropdown-menu">
-                    <li><a href="prestamo_solicitar_monto.php">Solicitar</a></li>
-                    <li><a href="prestamo_pagar.php">Realizar pago</a></li>
-					<li><a href="prestamos_visualizar.php">Visualizar</a></li>
-                  </ul>
-                </li>
-				<li><a href="db_logout.php">Cerrar sesión</a></li>
+                
               </ul>
             </div>
           </div>
@@ -99,22 +70,13 @@ if( isset( $_SESSION['admon'] ) ){
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
 		
-	  <form action="seguro_contratar.php" method="post">
-        <h2 class="form-heading">Selecciona el seguro que desees</h2>
-		<select class="form-control" id="inputNombreSeguro" name="nombre" required autofocus>
-<?php
-require_once( '../classes/Admon.php' );
-session_start();
-$admon = unserialize( $_SESSION['admon'] );
-$admon->actualizarTiposSeguro();
-foreach( $admon->listaTipoSeguro as $seguro ){
-	echo '<option>';
-	echo $seguro->nombre;
-	echo '</option>';
-}
-?>
-		</select>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Seleccionar</button>
+	  <form action="db_index_cambiar_password.php" method="post" >
+        <h2 class="form-heading">Cambia tu contraseña</h2>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" name="pass" class="form-control" placeholder="Contraseña" required autofocus>
+		<label for="inputPasswordSecure" class="sr-only">Password</label>
+        <input type="password" id="inputPasswordSecure" name="passSecure" class="form-control" placeholder="Vuelve a ingresar tu contraseña" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Continuar</button>
       </form>
 
 	  <footer>

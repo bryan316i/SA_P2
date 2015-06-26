@@ -37,7 +37,7 @@ if( isset( $usuario ) ){
 }*/
 if( isset( $_SESSION['admon'] ) ){
 }else{
-	//header( 'Location: ..');
+	header( 'Location: ..');
 }
 ?>
       <div class="navbar-wrapper">
@@ -101,7 +101,7 @@ if( isset( $_SESSION['admon'] ) ){
         <h1>Bienvenido!</h1>
         <p class="lead">Hola 
 <?php
-	echo unserialize($_SESSION['admon'])->usuarioActual->nombre;
+	echo unserialize($_SESSION['admon'])->usuarioActual->getNombreCompleto();
 ?>
 ! Estamos para servirte, por favor utiliza nuestros servicios.<br> No olvides que cuidamos de ti.</p>
       </div>

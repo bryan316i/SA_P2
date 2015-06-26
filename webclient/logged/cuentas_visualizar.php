@@ -93,7 +93,7 @@ if( isset( $_SESSION['admon'] ) ){
 		<div class="col-lg-5 col-centered">
 			<h4>Usuario: 
 <?php
-	echo unserialize($_SESSION['admon'])->usuarioActual->nombre;
+	echo unserialize($_SESSION['admon'])->usuarioActual->getNombreCompleto();
 ?>
 			</h4>
 		</div><!-- /.col-lg-4 -->

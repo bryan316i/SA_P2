@@ -155,6 +155,7 @@ class Usuario implements Serializable{
 	//atributos
 	public $id, $usuario, $password;
 	public $nombre, $apellido, $telefono, $direccion, $email;
+	public $cambiarPass, $fechaRegistro;
 	public $idDocIdentificacion, $numDocIdentificacion;
 	public $listaCuenta;
 	
@@ -182,6 +183,10 @@ class Usuario implements Serializable{
 		if( ! $client->fault && ! $client->getError() ){
 			$resultado = $result['resultado'];
 			$mensaje = $result['mensaje'];
+			//toma informacion
+			$this->nombre = "USUARIO";
+			//informacion del usuario
+			$this->refresh();
 			//ve resultado
 			return array( $resultado, $mensaje );
 		}else{
@@ -201,6 +206,24 @@ class Usuario implements Serializable{
 			return array( 5, "ERRROR" ); //error
 		}
 	}
+	public function refresh(){
+		$client = new nusoap_client( Admon::$connectionString );
+		$info = $client->call( "getInfoUsuario", array( "usuario" => $this->usuario ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$this->nombre = $info['nombre'];
+			$this->apellido = $info['apellido'];
+			$this->telefono = $info['telefono'];
+			$this->direccion = $info['direccion'];
+			$this->cambiarPass = $info['cambiarPass'];
+			$this->fechaRegistro = $info['fechaRegistro'];
+			$this->idDocIdentificacion = $info['idDocIdentificacion'];
+			$this->numDocIdentificacion = $info['numDocIdentificacion'];
+			$this->email = $info['email'];
+		}
+	}
+	public function getNombreCompleto(){
+		return $this->nombre . ' ' . $this->apellido;
+	}
 	//default
 	public function serialize(){
         return serialize( get_object_vars($this) );
@@ -211,9 +234,6 @@ class Usuario implements Serializable{
             $this->$key = $value;
         }
     }
-	public function refresh(){
-		return true;
-	}
 }
 
 class Cuenta{

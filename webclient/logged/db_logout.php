@@ -1,6 +1,7 @@
 <?php
 	require_once('../classes/Admon.php');
 	
+	session_start();
 	$admon = unserialize( $_SESSION['admon'] );
 	$resultado = $admon->usuarioActual->logout();
 	if( $resultado[0] == 1 ){
