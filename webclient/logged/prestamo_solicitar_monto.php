@@ -23,7 +23,14 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-
+<?php
+require_once( '../classes/Admon.php' );
+session_start();
+if( isset( $_SESSION['admon'] ) ){
+}else{
+	header( 'Location: ..');
+}
+?>
   <body>
 
       <div class="navbar-wrapper">
@@ -84,25 +91,19 @@
 	
 	  <div class="row">
 		<div class="col-lg-5 col-centered">
-			<h4>Usuario: usuario</h4>
+			<h4>Usuario: 
+<?php
+	echo unserialize($_SESSION['admon'])->usuarioActual->nombre;
+?>
+			</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
 		
-	  <form>
-        <h2 class="form-heading">Transferencia</h2>
-		<p>Selecciona tu cuenta:</p>
-		<select class="form-control" id="inputNumCuenta" required autofocus>
-			<option>5522215</option>
-			<option>5522216</option>
-		</select>
+	  <form action="prestamo_solicitar.php" method="post">
+        <h2 class="form-heading">Solicita un préstamo</h2>
         <label for="inputMonto" class="sr-only">Monto</label>
-        <input type="number" step="0.01" id="inputMonto" class="form-control" placeholder="Monto a transferir" required>
-		<p>Selecciona la cuenta destino:</p>
-		<select class="form-control" id="inputNumCuentaSecundaria" required autofocus>
-			<option>6661</option>
-			<option>6662</option>
-		</select>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Realizar transferencia</button>
+        <input type="number" step="0.01" id="inputMonto" name="monto" class="form-control" placeholder="Monto a solicitar" required autofocus>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Continuar</button>
       </form>
 
 	  <footer>

@@ -89,20 +89,11 @@
 	  </div><!-- /.row -->
 		
 	  <form>
-        <h2 class="form-heading">Transferencia</h2>
-		<p>Selecciona tu cuenta:</p>
-		<select class="form-control" id="inputNumCuenta" required autofocus>
-			<option>5522215</option>
-			<option>5522216</option>
-		</select>
-        <label for="inputMonto" class="sr-only">Monto</label>
-        <input type="number" step="0.01" id="inputMonto" class="form-control" placeholder="Monto a transferir" required>
-		<p>Selecciona la cuenta destino:</p>
-		<select class="form-control" id="inputNumCuentaSecundaria" required autofocus>
-			<option>6661</option>
-			<option>6662</option>
-		</select>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Realizar transferencia</button>
+        <h2 class="form-heading">Realiza tu pago</h2>
+		<p>Cuenta: Una cuenta</p>
+		<p>Seguro: Un seguro</p>
+		<p>Monto: Un monto</p>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Realizar pago</button>
       </form>
 
 	  <footer>

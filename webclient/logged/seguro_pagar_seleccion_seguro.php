@@ -38,40 +38,40 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="index.html">BitBat</a>
+              <a class="navbar-brand" href="index.php">BitBat</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="index.html">Inicio</a></li>
+                <li class="active"><a href="index.php">Inicio</a></li>
 				<li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cuentas <span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Crear</a></li>
-                    <li><a href="#">Visualizar</a></li>
+                    <li><a href="cuenta_crear.php">Crear</a></li>
+                    <li><a href="cuentas_visualizar.php">Visualizar</a></li>
                     <li role="separator" class="divider"></li>
                     <li class="dropdown-header">Movimientos</li>
-                    <li><a href="#">Depósito</a></li>
-                    <li><a href="#">Retiro</a></li>
-					<li><a href="#">Transferencia</a></li>
+                    <li><a href="cuenta_deposito.php">Depósito</a></li>
+                    <li><a href="cuenta_retiro.php">Retiro</a></li>
+					<li><a href="cuenta_transferencia.php">Transferencia</a></li>
                   </ul>
                 </li>
 				<li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seguros <span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Contratar</a></li>
-                    <li><a href="#">Realizar pago</a></li>
-					<li><a href="#">Visualizar</a></li>
+                    <li><a href="seguro_contratar_seleccion.php">Contratar</a></li>
+                    <li><a href="seguro_pagar_seleccion_cuenta.php">Realizar pago</a></li>
+					<li><a href="seguros_visualizar.php">Visualizar</a></li>
                   </ul>
                 </li>
 				<li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Préstamos <span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Solicitar</a></li>
-                    <li><a href="#">Realizar pago</a></li>
-					<li><a href="#">Visualizar</a></li>
+                    <li><a href="prestamo_solicitar_monto.php">Solicitar</a></li>
+                    <li><a href="prestamo_pagar.php">Realizar pago</a></li>
+					<li><a href="prestamos_visualizar.php">Visualizar</a></li>
                   </ul>
                 </li>
-				<li><a href="index.html">Cerrar sesión</a></li>
+				<li><a href="db_logout.php">Cerrar sesión</a></li>
               </ul>
             </div>
           </div>
@@ -80,20 +80,23 @@
       </div>
     </div>
 	
-    <div class="container">
-
-      <form class="form-signin">
-        <h2 class="form-signin-heading">Bienvenido</h2>
-        <label for="inputEmail" class="sr-only">Usuario</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="Usuario" required autofocus>
-        <label for="inputPassword" class="sr-only">Contraseña</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" value="remember-me"> Recordarme
-          </label>
-        </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Iniciar sesión</button>
+	<div class="container">
+	
+	  <div class="row">
+		<div class="col-lg-5 col-centered">
+			<h4>Usuario: usuario</h4>
+		</div><!-- /.col-lg-4 -->
+	  </div><!-- /.row -->
+		
+	  <form>
+        <h2 class="form-heading">Selecciona tu seguro</h2>
+		<p>Cuenta: Una cuenta</p>
+		<p>Seguro:</p>
+		<select class="form-control" id="inputNombreSeguro" required autofocus>
+			<option>Automóvil</option>
+			<option>Vida</option>
+		</select>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Seleccionar</button>
       </form>
 
 	  <footer>
@@ -105,7 +108,7 @@
 	<!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../js/jquery.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
   </body>
 </html>

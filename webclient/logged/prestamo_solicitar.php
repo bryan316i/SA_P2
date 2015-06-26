@@ -23,7 +23,14 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-
+<?php
+require_once( '../classes/Admon.php' );
+session_start();
+if( isset( $_SESSION['admon'] ) ){
+}else{
+	header( 'Location: ..');
+}
+?>
   <body>
 
       <div class="navbar-wrapper">
@@ -84,25 +91,55 @@
 	
 	  <div class="row">
 		<div class="col-lg-5 col-centered">
-			<h4>Usuario: usuario</h4>
+			<h4>Usuario: 
+<?php
+	echo unserialize($_SESSION['admon'])->usuarioActual->nombre;
+?>
+			</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
 		
 	  <form>
-        <h2 class="form-heading">Transferencia</h2>
-		<p>Selecciona tu cuenta:</p>
+        <h2 class="form-heading">Solicita un préstamo</h2>
+<?php
+	require_once('../classes/Admon.php');
+	$monto = $_POST['monto'];
+if( $monto < 5000 ){
+	//mensaje y redirigir
+	echo '<script language="javascript">';
+	echo 'alert( "No brindamos préstamos menores a Q 5,000.00" );';
+	echo 'window.location = "prestamo_solicitar_monto.php"';
+	echo '</script>';
+}else{
+	//mostrar informacion
+	$admon = unserialize( $_SESSION['admon'] );
+	$admon->actualizarTiposPrestamo();
+	$prestamo = $admon->getTipoPrestamo( $monto );
+	if( $prestamo != null ){
+		$total = $monto*(1+$prestamo->tasaInteres/100);
+		$cuota = round( $total / $prestamo->cantidadCuotas, 2 );
+		//mostrar informacion
+		echo '<p>Solicitado: Q' . $monto . '</p>';
+		echo '<input type="hidden" name="monto" value="'.$monto.'">';
+		echo '<p>Rango: Q' . $prestamo->min . ' a Q' . $prestamo->max . '</p>';
+		echo '<p>Total préstamo: Q' . $total . '</p>';
+		echo '<p>Tasa: ' . $prestamo->tasaInteres . '%</p>';
+		echo '<p>Cuotas: ' . $prestamo->cantidadCuotas . ' cuotas de Q' . $cuota . ' cada una</p>';
+	}else{
+		//mensaje y redirigir
+		echo '<script language="javascript">';
+		echo 'alert( "No brindamos actualmente tal prestamo" );';
+		echo 'window.location = "prestamo_solicitar_monto.php"';
+		echo '</script>';
+	}
+}
+?>
+		<p>Selecciona tu cuenta de asociación:</p>
 		<select class="form-control" id="inputNumCuenta" required autofocus>
 			<option>5522215</option>
 			<option>5522216</option>
 		</select>
-        <label for="inputMonto" class="sr-only">Monto</label>
-        <input type="number" step="0.01" id="inputMonto" class="form-control" placeholder="Monto a transferir" required>
-		<p>Selecciona la cuenta destino:</p>
-		<select class="form-control" id="inputNumCuentaSecundaria" required autofocus>
-			<option>6661</option>
-			<option>6662</option>
-		</select>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Realizar transferencia</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Solicitar</button>
       </form>
 
 	  <footer>

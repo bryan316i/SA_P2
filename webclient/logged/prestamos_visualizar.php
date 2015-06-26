@@ -80,30 +80,51 @@
       </div>
     </div>
 	
-	<div class="container">
+    <div class="container">
 	
 	  <div class="row">
 		<div class="col-lg-5 col-centered">
 			<h4>Usuario: usuario</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
-		
-	  <form>
-        <h2 class="form-heading">Transferencia</h2>
-		<p>Selecciona tu cuenta:</p>
-		<select class="form-control" id="inputNumCuenta" required autofocus>
-			<option>5522215</option>
-			<option>5522216</option>
-		</select>
-        <label for="inputMonto" class="sr-only">Monto</label>
-        <input type="number" step="0.01" id="inputMonto" class="form-control" placeholder="Monto a transferir" required>
-		<p>Selecciona la cuenta destino:</p>
-		<select class="form-control" id="inputNumCuentaSecundaria" required autofocus>
-			<option>6661</option>
-			<option>6662</option>
-		</select>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Realizar transferencia</button>
-      </form>
+	  
+	  <div class="row">
+        <div class="col-lg-11 col-centered">
+			<h2 class="sub-header">Préstamos registrados</h2>
+			  <div class="table-responsive">
+				<table class="table table-striped">
+				  <thead>
+					<tr>
+					  <th>#</th>
+					  <th>Cuenta</th>
+					  <th>Préstamo</th>
+					  <th>Fecha solicitado</th>
+					  <th>Autorizado</th>
+					  <th>Fecha autorización</th>
+					  <th>Total cuotas</th>
+					  <th>Cuotas restantes</th>
+					  <th>Monto</th>
+					  <th>Saldo restante</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					<tr>
+					  <td>1</td>
+					  <td>5522215</td>
+					  <td>Q 280,000.00</td>
+					  <td>22/06/2015</td>
+					  <td>Sí</td>
+					  <td>22/06/2015</td>
+					  <td>20</td>
+					  <td>19</td>
+					  <td>Q 500.00</td>
+					  <td>Q 299,500.00</td>
+					</tr>
+				  </tbody>
+				</table>
+			  </div>
+		  </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
 
 	  <footer>
         <p>&copy; 2015 Banco, BitBat &middot; <a href="#">Privacidad</a> &middot; <a href="#">Términos</a></p>

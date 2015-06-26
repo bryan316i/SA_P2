@@ -25,7 +25,14 @@
   </head>
 
   <body>
-
+<?php
+require_once( '../classes/Admon.php' );
+session_start();
+if( isset( $_SESSION['admon'] ) ){
+}else{
+	header( 'Location: ..');
+}
+?>
       <div class="navbar-wrapper">
       <div class="container">
 
@@ -84,25 +91,30 @@
 	
 	  <div class="row">
 		<div class="col-lg-5 col-centered">
-			<h4>Usuario: usuario</h4>
+			<h4>Usuario: 
+<?php
+	echo unserialize($_SESSION['admon'])->usuarioActual->nombre;
+?>
+			</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
 		
-	  <form>
-        <h2 class="form-heading">Transferencia</h2>
-		<p>Selecciona tu cuenta:</p>
-		<select class="form-control" id="inputNumCuenta" required autofocus>
-			<option>5522215</option>
-			<option>5522216</option>
+	  <form action="seguro_contratar.php" method="post">
+        <h2 class="form-heading">Selecciona el seguro que desees</h2>
+		<select class="form-control" id="inputNombreSeguro" name="nombre" required autofocus>
+<?php
+require_once( '../classes/Admon.php' );
+session_start();
+$admon = unserialize( $_SESSION['admon'] );
+$admon->actualizarTiposSeguro();
+foreach( $admon->listaTipoSeguro as $seguro ){
+	echo '<option>';
+	echo $seguro->nombre;
+	echo '</option>';
+}
+?>
 		</select>
-        <label for="inputMonto" class="sr-only">Monto</label>
-        <input type="number" step="0.01" id="inputMonto" class="form-control" placeholder="Monto a transferir" required>
-		<p>Selecciona la cuenta destino:</p>
-		<select class="form-control" id="inputNumCuentaSecundaria" required autofocus>
-			<option>6661</option>
-			<option>6662</option>
-		</select>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Realizar transferencia</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Seleccionar</button>
       </form>
 
 	  <footer>

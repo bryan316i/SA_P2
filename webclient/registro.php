@@ -56,29 +56,33 @@
 	
     <div class="container">
 
-      <form class="form-registro">
+      <form class="form-registro" action="db_registro.php" method="post">
         <h2 class="form-registro-heading">Regístrate</h2>
         <label for="inputNombres" class="sr-only">Nombres</label>
-		<input type="text" id="inputNombres" class="form-control" placeholder="Nombres" required autofocus>
+		<input type="text" id="inputNombres" name="nombre" class="form-control" placeholder="Nombres" required autofocus>
 		<label for="inputApellidos" class="sr-only">Apellidos</label>
-		<input type="text" id="inputApellidos" class="form-control" placeholder="Apellidos" required>
+		<input type="text" id="inputApellidos" name="apellido" class="form-control" placeholder="Apellidos" required>
 		<label for="inputEmail" class="sr-only">Correo electrónico</label>
-		<input type="email" id="inputEmail" class="form-control" placeholder="Correo electrónico" required>
+		<input type="email" id="inputEmail" name="email" class="form-control" placeholder="Correo electrónico" required>
 		<label for="inputTelefono" class="sr-only">Teléfono</label>
-		<input type="number" id="inputTelefono" class="form-control" placeholder="Teléfono" required>
+		<input type="number" id="inputTelefono" name="telefono" class="form-control" placeholder="Teléfono" required>
 		<label for="inputDireccion" class="sr-only">Dirección</label>
-		<input type="text" id="inputDireccion" class="form-control" placeholder="Dirección" required>
-        <label for="inputPassword" class="sr-only">Contraseña</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required>
-		<label for="inputConfirmarPassword" class="sr-only">Confirmar contraseña</label>
-        <input type="password" id="inputConfirmarPassword" class="form-control" placeholder="Confirmar contraseña" required>
-        <select class="form-control" id="inputDocIdentificacion">
-			<option>DPI</option>
-			<option>Licencia</option>
+		<input type="text" id="inputDireccion" name="direccion" class="form-control" placeholder="Dirección" required>
+        <select class="form-control" id="inputDocIdentificacion" name="docIdentif">
+<?php
+require_once( 'classes/Admon.php' );
+session_start();
+$admon = new Admon();
+$admon->actualizarDocsIdentif();
+for( $i=0; $i<count( $admon->listaDocIdentificacion ); $i++ ){
+	echo '<option>';
+	echo $admon->listaDocIdentificacion[$i]->nombre;
+	echo '</option>';
+}
+?>
 		</select>
-		<input type="text" id="inputDocIdentificacion" class="form-control" placeholder="Documento de identificación" required>
 		<label for="inputNumDocIdentificacion" class="sr-only">Documento de identificación</label>
-		<input type="number" id="inputNumDocIdentificacion" class="form-control" placeholder="Número de documento" required>
+		<input type="number" id="inputNumDocIdentificacion" name="numDocIdentif" class="form-control" placeholder="Número de documento" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Registrarse</button>
       </form>
 
@@ -91,7 +95,7 @@
 	<!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </body>
 </html>

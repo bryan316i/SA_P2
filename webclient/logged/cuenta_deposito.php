@@ -58,20 +58,20 @@
 				<li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Seguros <span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="seguro_contratar.php">Contratar</a></li>
-                    <li><a href="seguro_pagar.php">Realizar pago</a></li>
+                    <li><a href="seguro_contratar_seleccion.php">Contratar</a></li>
+                    <li><a href="seguro_pagar_seleccion_cuenta.php">Realizar pago</a></li>
 					<li><a href="seguros_visualizar.php">Visualizar</a></li>
                   </ul>
                 </li>
 				<li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Préstamos <span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="prestamo_solicitar.php">Solicitar</a></li>
+                    <li><a href="prestamo_solicitar_monto.php">Solicitar</a></li>
                     <li><a href="prestamo_pagar.php">Realizar pago</a></li>
 					<li><a href="prestamos_visualizar.php">Visualizar</a></li>
                   </ul>
                 </li>
-				<li><a href="logout.php">Cerrar sesión</a></li>
+				<li><a href="db_logout.php">Cerrar sesión</a></li>
               </ul>
             </div>
           </div>
@@ -109,7 +109,7 @@
 	<!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="../js/jquery.min.js"></script>
     <script src="../js/bootstrap.min.js"></script>
   </body>
 </html>

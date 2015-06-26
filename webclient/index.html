@@ -59,17 +59,17 @@
 	
 		<div class="jumbotron">
 		  <div class="container">
-			<h1>Bienivenido!</h1>
+			<h1>Bienvenido!</h1>
 			<p class="lead">Estamos para hacerte crecer. Mediante el crecimiento económico de día a día hacemos de nuestra organización un lugar mejor para que guardes tu dinero.<br> Cuidamos de ti.</p>
 		  </div>
 		</div>
 		
-      <form class="form-signin">
+      <form class="form-signin" action="db_login.php" method="post" >
         <h2 class="form-signin-heading">Inicia sesión</h2>
         <label for="inputUsuario" class="sr-only">Usuario</label>
-        <input type="text" id="inputUsuario" class="form-control" placeholder="Usuario" required autofocus>
+        <input type="text" id="inputUsuario" name="usuario" class="form-control" placeholder="Usuario" required autofocus>
         <label for="inputPassword" class="sr-only">Contraseña</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Contraseña" required>
+        <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Contraseña" required>
         <div class="checkbox">
           <label>
             <input type="checkbox" value="remember-me"> Recordarme
@@ -87,7 +87,7 @@
 	<!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
   </body>
 </html>
