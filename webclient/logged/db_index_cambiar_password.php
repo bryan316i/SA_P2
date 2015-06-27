@@ -4,14 +4,15 @@
 	session_start();
 	$admon = unserialize( $_SESSION['admon'] );
 	
-	$pass = $_SESSION['pass'];
-	$passSecure = $_SESSION['passSecure'];
+	$pass = $_POST['pass'];
+	$passSecure = $_POST['passSecure'];
 	if( strcmp( $pass, $passSecure ) == 0 ){
 		//cambiar contraseña
 		$admon->usuarioActual->password = $pass;
 		$resultado = $admon->usuarioActual->cambiarPassword();
 		if( $resultado == 1 ){
 			//actualiza sesion
+			$admon->usuarioActual->cambiarPass = 0;
 			$_SESSION['admon'] = serialize( $admon );
 			//mensaje y redirigir
 			echo '<script language="javascript">';

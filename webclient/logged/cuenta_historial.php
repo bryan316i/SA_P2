@@ -87,7 +87,7 @@ if( isset( $_SESSION['admon'] ) ){
       </div>
     </div>
 	
-	<div class="container">
+    <div class="container">
 	
 	  <div class="row">
 		<div class="col-lg-5 col-centered">
@@ -98,28 +98,65 @@ if( isset( $_SESSION['admon'] ) ){
 			</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
-		
-	  <form action="db_cuenta_transferencia.php" method="post" >
-        <h2 class="form-heading">Transferencia</h2>
-		<p>Selecciona tu cuenta:</p>
-		<select class="form-control" id="inputNumCuenta" name="numCuenta" required autofocus>
+	  
+	  <div class="row">
+        <div class="col-lg-7 col-centered">
+			<h2 class="sub-header">Cuenta: 
 <?php
+	echo $_GET['id'];
+?>
+			</h2>
+			  <div class="table-responsive">
+				<table class="table table-striped">
+				  <thead>
+					<tr>
+					  <th>#</th>
+					  <th>Fecha</th>
+					  <th>Monto</th>
+					  <th>Tipo</th>
+					  <th>Cuenta Destino</th>
+					  <th>Préstamo</th>
+					  <th>Seguro</th>
+					  <!--<th>Banco Cta Destino</th>
+					  <th>Prestamo</th>
+					  <th>Seguro</th>-->
+					</tr>
+				  </thead>
+				  <tbody>
+<?php
+	$id = $_GET['id'];
 	$admon = unserialize( $_SESSION['admon'] );
 	$admon->usuarioActual->actualizarCuentas();
-	foreach( $admon->usuarioActual->listaCuenta as $cuenta ){
-		echo '<option>';
-		echo $cuenta->id;
-		echo '</option>';
+	$cuenta = $admon->usuarioActual->getCuenta( $id );
+	$cuenta->actualizarHistorial( $admon->usuarioActual->usuario );
+	for( $i=0; $i<count($cuenta->historial); $i++ ){
+		$mov = $cuenta->historial[ $i ];
+		$num = $i + 1;
+		echo '<tr>';
+		echo '<td>' . $num . '</td>';
+		echo '<td>' . $mov->fecha . '</td>';
+		echo '<td>Q' . $mov->monto . '</td>';
+		echo '<td>' . $mov->getTipo() . '</td>';
+		echo '<td>' . $mov->idCuentaSecundaria . '</td>';
+		echo '<td>' . $mov->idPrestamo . '</td>';
+		echo '<td>' . $mov->idSeguro . '</td>';
+		echo '</tr>';
 	}
 ?>
-		</select>
-        <label for="inputMonto" class="sr-only">Monto</label>
-        <input type="number" step="0.01" id="inputMonto" name="monto" class="form-control" placeholder="Monto a transferir" required>
-		<p>Indica la cuenta destino:</p>
-		<label for="inputNumCuentaSecundaria" class="sr-only">Cuenta destino</label>
-        <input type="number" step="1" id="inputNumCuentaSecundaria" name="numCuentaSec" class="form-control" placeholder="Cuenta destino" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Realizar transferencia</button>
-      </form>
+				  </tbody>
+				</table>
+				<?php
+	$numCuenta = $_GET['id'];
+	//imprimir comprobante
+	echo '<form action="db_cuenta_imprimir_comprobante.php" method="post" >';
+	echo '<input type="hidden" name="numCuenta" value="'.$numCuenta.'"/>';
+	echo '';
+	echo '<td><button class="btn btn-lg btn-primary btn-block" type="submit">Imprimir comprobante</button></td>';
+	echo '</form>';
+?>
+			  </div>
+		  </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
 
 	  <footer>
         <p>&copy; 2015 Banco, BitBat &middot; <a href="#">Privacidad</a> &middot; <a href="#">Términos</a></p>

@@ -25,7 +25,14 @@
   </head>
 
   <body>
-
+<?php
+require_once( '../classes/Admon.php' );
+session_start();
+if( isset( $_SESSION['admon'] ) ){
+}else{
+	header( 'Location: ..');
+}
+?>
       <div class="navbar-wrapper">
       <div class="container">
 
@@ -84,19 +91,30 @@
 	
 	  <div class="row">
 		<div class="col-lg-5 col-centered">
-			<h4>Usuario: usuario</h4>
+			<h4>Usuario: 
+<?php
+	echo unserialize($_SESSION['admon'])->usuarioActual->getNombreCompleto();
+?>
+			</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
 		
-	  <form>
+	  <form action="db_cuenta_retiro.php" method="post">
         <h2 class="form-heading">Retiro</h2>
 		<p>Selecciona tu cuenta:</p>
-		<select class="form-control" id="inputNumCuenta" required autofocus>
-			<option>5522215</option>
-			<option>5522216</option>
+		<select class="form-control" id="inputNumCuenta" name="numCuenta" required autofocus>
+<?php
+	$admon = unserialize( $_SESSION['admon'] );
+	$admon->usuarioActual->actualizarCuentas();
+	foreach( $admon->usuarioActual->listaCuenta as $cuenta ){
+		echo '<option>';
+		echo $cuenta->id;
+		echo '</option>';
+	}
+?>
 		</select>
         <label for="inputMonto" class="sr-only">Monto</label>
-        <input type="number" step="0.01" id="inputMonto" class="form-control" placeholder="Monto a retirar" required>
+        <input type="number" step="0.01" id="inputMonto" name="monto" class="form-control" placeholder="Monto a retirar" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Realizar retiro</button>
       </form>
 

@@ -7,7 +7,10 @@ class Admon implements Serializable{
 	public $idCuentaActual;
 	public $client;
 	public static $connectionString = "http://25.126.241.8/WebServices/server.php";
+	//public static $connectionString = "http://192.168.1.55/WebServices/server.php";
 	public $listaDocIdentificacion, $listaTipoPrestamo, $listaTipoSeguro, $listaBanco;
+	//ESPECIAL
+	public $listaPrestamoSinAutorizar;
 	
 	//metodos
 	function __construct(){
@@ -131,6 +134,37 @@ class Admon implements Serializable{
 		$this->usuarioActual->password = $pass;
 		return $this->usuarioActual->login();
 	}
+	public function actualizarPrestamosSinAutorizar(){
+		unset( $this->listaPrestamosSinAutorizar );
+		$client = new nusoap_client( Admon::$connectionString );
+		//prestamos sin autorizar
+		$result = $client->call( "getIdsPrestamoSinAutorizar" );
+		if( ! $client->fault && ! $client->getError() ){
+			$cantidad = $result['cantidad'];
+			$ids = $result['array'];
+			for( $i=0; $i<$cantidad; $i++ ){
+				$id = $ids[$i];
+				//informacion de cada prestamo
+				$info = $client->call( "getPrestamo", array( "id" => $id ) );
+				if( ! $client->fault && ! $client->getError() ){
+					$prestamo = new Prestamo( $info['montoCuota'], $info['totalPrestamo'], $info['totalRecibir'], $info['idTipoPrestamo'] );
+					$prestamo->id = $id;
+					$this->listaPrestamosSinAutorizar[] = $prestamo;
+				}
+			}
+		}
+	}
+	public function autorizarPrestamo( $idPrestamo ){
+		$client = new nusoap_client( Admon::$connectionString );
+		//prestamos sin autorizar
+		$result = $client->call( "setAutorizarPrestamo", array( "id" => $idPrestamo ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$resultado = $result['resultado'];
+			$mensaje = $result['mensaje'];
+			return array( $resultado, $mensaje );
+		}
+		return null;
+	}
 	//default
 	public function serialize(){
         return serialize( get_object_vars($this) );
@@ -170,8 +204,10 @@ class Usuario implements Serializable{
 		if( ! $client->fault && ! $client->getError() ){
 			$resultado = $result['resultado'];
 			$mensaje = $result['mensaje'];
+			$usr = $result['usuario'];
+			$pass = $result['password'];
 			//ve resultado
-			return array( $resultado, $mensaje );
+			return array( $resultado, $mensaje, $usr, $pass );
 		}else{
 			return array( 3, "ERRROR" ); //error
 		}
@@ -210,6 +246,7 @@ class Usuario implements Serializable{
 		$client = new nusoap_client( Admon::$connectionString );
 		$info = $client->call( "getInfoUsuario", array( "usuario" => $this->usuario ) );
 		if( ! $client->fault && ! $client->getError() ){
+			$this->id = $info['id'];
 			$this->nombre = $info['nombre'];
 			$this->apellido = $info['apellido'];
 			$this->telefono = $info['telefono'];
@@ -221,8 +258,55 @@ class Usuario implements Serializable{
 			$this->email = $info['email'];
 		}
 	}
+	public function cambiarPassword(){
+		$client = new nusoap_client( Admon::$connectionString );
+		$result = $client->call( "setPassword", array( "usuario" => $this->usuario, "password" => $this->password ) );
+		if( ! $client->fault && ! $client->getError() ){
+			return $result['resultado'];
+		}
+		return 3;
+	}
 	public function getNombreCompleto(){
 		return $this->nombre . ' ' . $this->apellido;
+	}
+	public function actualizarCuentas(){
+		unset( $this->listaCuenta );
+		$client = new nusoap_client( Admon::$connectionString );
+		//cuentas
+		$result = $client->call( "getIdsCuenta", array( "id" => $this->id, "usuario" => $this->usuario ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$cantidad = $result['cantidad'];
+			$ids = $result['array'];
+			for( $i=0; $i<$cantidad; $i++ ){
+				$id = $ids[$i];
+				//informacion de cada cuenta
+				$info = $client->call( "getCuenta", array( "id" => $id, "usuario" => $this->usuario ) );
+				if( ! $client->fault && ! $client->getError() ){
+					$cuenta = new Cuenta( $id, $info['fechaCreacion'], $info['saldo'] );
+					$this->listaCuenta[] = $cuenta;
+				}
+			}
+			return $cantidad;
+		}
+	}
+	public function crearCuenta( $montoInicial ){
+		$client = new nusoap_client( Admon::$connectionString );
+		//crear cuenta
+		$result = $client->call( "addCuenta", array( "usuario" => $this->usuario ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$resultado = $result['resultado'];
+			$id = $result['id'];
+			$fechaCreacion = $result['fechaCreacion'];
+			return array( $resultado, $id, $fechaCreacion );
+		}
+	}
+	public function getCuenta( $numCuenta ){
+		foreach ( $this->listaCuenta as $cuenta ){
+			if( $numCuenta == $cuenta->id ){
+				return $cuenta;
+			}
+		}
+		return null;
 	}
 	//default
 	public function serialize(){
@@ -241,36 +325,166 @@ class Cuenta{
 	public $listaPrestamo, $listaSeguro, $historial;
 	public $saldo;
 	
-	function __construct(){
+	function __construct( $id, $fechaCreacion, $saldo ){
+		$this->id = $id;
+		$this->fechaCreacion = $fechaCreacion;
+		$this->saldo = $saldo;
 	}
-	public function crear( $montoInicial ){
-		return true;
+	public function depositar( $usuario, $monto ){
+		return $this->movimiento( $usuario, $monto, 1 );
+	}
+	public function retiro( $usuario, $monto ){
+		return $this->movimiento( $usuario, $monto, 2 );
+	}
+	public function movimiento( $usuario, $monto, $operacion ){
+		$client = new nusoap_client( Admon::$connectionString );
+		//crear movimiento
+		$result = $client->call( "addMovimientoLocal", array( "id" => $this->id, "usuario" => $usuario, "tipoOperacion" => $operacion, "monto" => $monto ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$resultado = $result['resultado'];
+			$mensaje = $result['mensaje'];
+			$saldo = $result['saldo'];
+			return array( $resultado, $mensaje, $saldo );
+		}
+	}
+	public function transferencia( $usuario, $cuentaSecundaria, $monto, $operacion ){
+		$client = new nusoap_client( Admon::$connectionString );
+		//crear movimiento
+		$result = $client->call( "addTransferenciaLocal", array( "id" => $this->id, "usuario" => $usuario, "idCuentaSecundaria" => $cuentaSecundaria, "tipoOperacion" => $operacion, "monto" => $monto ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$resultado = $result['resultado'];
+			$mensaje = $result['mensaje'];
+			$saldo = $result['saldo'];
+			return array( $resultado, $mensaje, $saldo );
+		}
+	}
+	public function actualizarHistorial( $usuario ){
+		unset( $this->historial );
+		$client = new nusoap_client( Admon::$connectionString );
+		//cuentas
+		$result = $client->call( "getIdsMovimiento", array( "id" => $this->id, "usuario" => $usuario ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$cantidad = $result['cantidad'];
+			$ids = $result['array'];
+			for( $i=0; $i<$cantidad; $i++ ){
+				$id = $ids[$i];
+				//informacion de cada movimiento
+				$info = $client->call( "getMovimiento", array( "idCuenta" => $this->id, "idMovimiento" => $id ) );
+				if( ! $client->fault && ! $client->getError() ){
+					$mov = new Movimiento( $id, $info['fecha'], $info['monto'], $info['tipo'], $info['idCuentaSecundaria'], $info['idBancoCuentaSecundaria'], $info['idPrestamo'], $info['idSeguro'] );
+					$this->historial[] = $mov;
+				}
+			}
+			return $cantidad;
+		}
+	}
+	public function actualizarPrestamos( $usuario ){
+		unset( $this->listaPrestamo );
+		$client = new nusoap_client( Admon::$connectionString );
+		//prestamos
+		$result = $client->call( "getIdsPrestamoCuenta", array( "id" => $this->id, "usuario" => $usuario ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$cantidad = $result['cantidad'];
+			$ids = $result['array'];
+			for( $i=0; $i<$cantidad; $i++ ){
+				$id = $ids[$i];
+				//informacion de cada prestamo
+				$info = $client->call( "getPrestamo", array( "idPrestamo" => $id ) );
+				if( ! $client->fault && ! $client->getError() ){
+					$prestamo = new Prestamo( $info['montoCuota'], $info['totalPrestamo'], $info['totalRecibir'], $info['idTipoPrestamo'] );
+					$prestamo->id = $id;
+					$prestamo->fechaRegistro = $info['fechaRegistro'];
+					$prestamo->autorizado = $info['autorizado'];
+					$prestamo->fechaAutorizado = $info['fechaAutorizacion'];
+					$this->listaPrestamo[] = $prestamo;
+				}
+			}
+			return $cantidad;
+		}
+	}
+	public function getEstadisticasPrestamo( $idPrestamo ){
+		$cantidad = 0;
+		$acumulado = 0.00;
+		for( $i=0; $i<count( $this->historial ); $i++ ){
+			$mov = $this->historial[$i];
+			if( $mov->idPrestamo == $idPrestamo && $mov->entrada == 2 ){
+				$cantidad++;
+				$acumulado = $acumulado + $mov->monto;
+			}
+		}
+		return array( $cantidad, $acumulado );
+	}
+	public function getPrestamo( $idPrestamo ){
+		foreach ( $this->listaPrestamo as $prestamo ){
+			if( $idPrestamo == $prestamo->id ){
+				return $prestamo;
+			}
+		}
+		return null;
 	}
 }
 
 /*OPERACIONES*/
 class Prestamo{
 	//atributos
-	public $id, $montoCuota, $totalPrestamo, $totalRecibir, $fechaRegistro, $autorizado, $fechaAutorizado, $tipoPrestamo;
+	public $id, $montoCuota, $totalPrestamo, $totalRecibir, $fechaRegistro, $autorizado, $fechaAutorizado, $idTipoPrestamo;
 	//metodos
-	public function crear(){
-		
+	function __construct( $montoCuota, $totalPrestamo, $totalRecibir, $idTipoPrestamo ){
+		$this->montoCuota = $montoCuota;
+		$this->totalPrestamo = $totalPrestamo;
+		$this->totalRecibir = $totalRecibir;
+		$this->idTipoPrestamo = $idTipoPrestamo;
+	}
+	public function crear( $idCuenta, $usuario ){
+		$client = new nusoap_client( Admon::$connectionString );
+		//crear prestamo
+		$result = $client->call( "addPrestamo", array( "id" => $idCuenta, "usuario" => $usuario, "montoCuota" => $this->montoCuota, "totalPrestamo" => $this->totalPrestamo, "totalRecibir" => $this->totalRecibir, "idTipoPrestamo" => $this->idTipoPrestamo ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$resultado = $result['resultado'];
+			$mensaje = $result['mensaje'];
+			return array( $resultado, $mensaje );
+		}
 		return true;
 	}
-	public function depositar(){
-		return true;
+	public function getAutorizado(){
+		if( $this->autorizado == 1 ){
+			return "Si";
+		}else{
+			return "No";
+		}
 	}
-	public function debitar(){
-		return true;
+	public function pagar( $idCuenta ){
+		$client = new nusoap_client( Admon::$connectionString );
+		//crear pago de prestamo
+		$result = $client->call( "addPagoPrestamo", array( "idPrestamo" => $this->id, "idCuenta" => $idCuenta ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$resultado = $result['resultado'];
+			$mensaje = $result['mensaje'];
+			//$monto = $result['monto'];
+			$monto = 0.00;
+			return array( $resultado, $mensaje, $monto );
+		}
+		return false;
 	}
-	public function transferencia(){
-		return true;
+}
+class Movimiento{
+	public $id, $fecha, $monto, $entrada, $idCuentaSecundaria, $idBancoCuentaSecundaria, $idPrestamo, $idSeguro;
+	function __construct( $id, $fecha, $monto, $entrada, $idCuentaSecundaria, $idBancoCuentaSecundaria, $idPrestamo, $idSeguro ){
+		$this->id = $id;
+		$this->fecha = $fecha;
+		$this->monto = $monto;
+		$this->entrada = $entrada;
+		$this->idCuentaSecundaria = $idCuentaSecundaria;
+		$this->idBancoCuentaSecundaria = $idBancoCuentaSecundaria;
+		$this->idPrestamo = $idPrestamo;
+		$this->idSeguro = $idSeguro;
 	}
-	public function getHistorial(){
-		return true;
-	}
-	public function refresh(){
-		return true;
+	public function getTipo(){
+		if( $this->entrada == 1 ){
+			return "deposito";
+		}else{
+			return "retiro";
+		}
 	}
 }
 

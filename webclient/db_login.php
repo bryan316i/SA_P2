@@ -11,7 +11,7 @@
 		//iniciar sesion
 		session_start();
 		$_SESSION['admon'] = serialize( $admon );
-		if( cambiarPass == 0 ){ //REVISAR
+		if( $cambiarPass == 1 ){
 			header('Location: logged/index_cambiar_password.php');
 		}else{
 			header('Location: logged/index.php');

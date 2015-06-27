@@ -87,7 +87,7 @@ if( isset( $_SESSION['admon'] ) ){
       </div>
     </div>
 	
-	<div class="container">
+    <div class="container">
 	
 	  <div class="row">
 		<div class="col-lg-5 col-centered">
@@ -98,28 +98,39 @@ if( isset( $_SESSION['admon'] ) ){
 			</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
-		
-	  <form action="db_cuenta_transferencia.php" method="post" >
-        <h2 class="form-heading">Transferencia</h2>
-		<p>Selecciona tu cuenta:</p>
-		<select class="form-control" id="inputNumCuenta" name="numCuenta" required autofocus>
+	  
+	  <div class="row">
+        <div class="col-lg-5 col-centered">
+			<h2 class="sub-header">Cuentas</h2>
+			  <div class="table-responsive">
+				<table class="table table-striped">
+				  <thead>
+					<tr>
+					  <th>#</th>
+					  <th>Número</th>
+					  <th>Fecha creación</th>
+					  <th>Saldo</th>
+					</tr>
+				  </thead>
+				  <tbody>
 <?php
 	$admon = unserialize( $_SESSION['admon'] );
-	$admon->usuarioActual->actualizarCuentas();
-	foreach( $admon->usuarioActual->listaCuenta as $cuenta ){
-		echo '<option>';
-		echo $cuenta->id;
-		echo '</option>';
+	for( $i=0; $i<count($admon->usuarioActual->listaCuenta); $i++ ){
+		$cuenta = $admon->usuarioActual->listaCuenta[ $i ];
+		$num = $i + 1;
+		echo '<tr>';
+		echo '<td>' . $num . '</td>';
+		echo '<td><a href="cuenta_historial.php?id=' . $cuenta->id . '">' . $cuenta->id . '</a></td>';
+		echo '<td>' . $cuenta->fechaCreacion . '55</td>';
+		echo '<td>Q ' . $cuenta->saldo . '</td>';
+		echo '</tr>';
 	}
 ?>
-		</select>
-        <label for="inputMonto" class="sr-only">Monto</label>
-        <input type="number" step="0.01" id="inputMonto" name="monto" class="form-control" placeholder="Monto a transferir" required>
-		<p>Indica la cuenta destino:</p>
-		<label for="inputNumCuentaSecundaria" class="sr-only">Cuenta destino</label>
-        <input type="number" step="1" id="inputNumCuentaSecundaria" name="numCuentaSec" class="form-control" placeholder="Cuenta destino" required>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Realizar transferencia</button>
-      </form>
+				  </tbody>
+				</table>
+			  </div>
+		  </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
 
 	  <footer>
         <p>&copy; 2015 Banco, BitBat &middot; <a href="#">Privacidad</a> &middot; <a href="#">Términos</a></p>

@@ -99,7 +99,7 @@ if( isset( $_SESSION['admon'] ) ){
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
 		
-	  <form>
+	  <form action="db_prestamo_solicitar.php" method="post" >
         <h2 class="form-heading">Solicita un préstamo</h2>
 <?php
 	require_once('../classes/Admon.php');
@@ -115,29 +115,40 @@ if( $monto < 5000 ){
 	$admon = unserialize( $_SESSION['admon'] );
 	$admon->actualizarTiposPrestamo();
 	$prestamo = $admon->getTipoPrestamo( $monto );
+	//echo 'cantidad: '.count( $admon->listaTipoPrestamo );
 	if( $prestamo != null ){
 		$total = $monto*(1+$prestamo->tasaInteres/100);
 		$cuota = round( $total / $prestamo->cantidadCuotas, 2 );
 		//mostrar informacion
+		echo '<input type="hidden" name="idTipoPrestamo" value="'.$prestamo->id.'">';
 		echo '<p>Solicitado: Q' . $monto . '</p>';
-		echo '<input type="hidden" name="monto" value="'.$monto.'">';
+		echo '<input type="hidden" name="totalPrestamo" value="'.$monto.'">';
 		echo '<p>Rango: Q' . $prestamo->min . ' a Q' . $prestamo->max . '</p>';
-		echo '<p>Total préstamo: Q' . $total . '</p>';
-		echo '<p>Tasa: ' . $prestamo->tasaInteres . '%</p>';
+		echo '<p>Total a devolver: Q' . $total . '</p>';
+		echo '<input type="hidden" name="totalRecibir" value="'.$total.'">';
+		echo '<p>Tasa interés: ' . $prestamo->tasaInteres . '%</p>';
 		echo '<p>Cuotas: ' . $prestamo->cantidadCuotas . ' cuotas de Q' . $cuota . ' cada una</p>';
+		echo '<input type="hidden" name="montoCuota" value="'.$cuota.'">';
 	}else{
 		//mensaje y redirigir
 		echo '<script language="javascript">';
 		echo 'alert( "No brindamos actualmente tal prestamo" );';
-		echo 'window.location = "prestamo_solicitar_monto.php"';
+		//echo 'window.location = "prestamo_solicitar_monto.php"';
 		echo '</script>';
 	}
 }
 ?>
 		<p>Selecciona tu cuenta de asociación:</p>
-		<select class="form-control" id="inputNumCuenta" required autofocus>
-			<option>5522215</option>
-			<option>5522216</option>
+		<select class="form-control" id="inputNumCuenta" name="numCuenta" required autofocus>
+<?php
+	$admon = unserialize( $_SESSION['admon'] );
+	$admon->usuarioActual->actualizarCuentas();
+	foreach( $admon->usuarioActual->listaCuenta as $cuenta ){
+		echo '<option>';
+		echo $cuenta->id;
+		echo '</option>';
+	}
+?>
 		</select>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Solicitar</button>
       </form>

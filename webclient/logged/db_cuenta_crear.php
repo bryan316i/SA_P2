@@ -10,15 +10,38 @@ if( $monto < 100 ){
 	echo '</script>';
 }else{
 	//crear cuenta
+	session_start();
 	$admon = unserialize( $_SESSION['admon'] );
-	$cuenta = new Cuenta();
-	if( $cuenta->crear( $monto ) == true ){
-		$admon->usuarioActual->listaCuenta[] = $cuenta;
-		//mensaje y redirigir
-		echo '<script language="javascript">';
-		echo 'alert( "Cuenta creada con éxito" );';
-		echo 'window.location = "cuentas_visualizar.php"';
-		echo '</script>';
+	$resultado = $admon->usuarioActual->crearCuenta( $monto );
+	if( $resultado[0] == 1 ){
+		//$admon->usuarioActual->actualizarCuentas();
+		//realizar deposito
+		/*$admon->usuarioActual->actualizarCuentas();
+		$prueba = $admon->usuarioActual->getCuenta( 29 );
+		echo '<tr>';
+		echo '<td>';
+		echo '6666';
+		echo 'dddd'.$prueba->id;
+		echo '</td>';
+		echo '</tr>';*/
+		$admon->usuarioActual->actualizarCuentas();
+		$cuenta = $admon->usuarioActual->getCuenta( $resultado[1] );
+		//echo 'dddd'.$resultado[1];
+		$resultado = $cuenta->depositar( $admon->usuarioActual->usuario, $monto );
+		if( $resultado[0] == 1 ){
+			//$admon->usuarioActual->actualizarCuentas();
+			//mensaje y redirigir
+			echo '<script language="javascript">';
+			echo 'alert( "Cuenta creada con éxito, '.$resultado[1].'" );';
+			echo 'window.location = "cuentas_visualizar.php"';
+			echo '</script>';
+		}else{
+			//mensaje y redirigir
+			echo '<script language="javascript">';
+			echo 'alert( "Cuenta creada con éxito'.$resultado[1].'" );';
+			echo 'window.location = "cuenta_deposito.php"';
+			echo '</script>';
+		}
 	}else{
 		//mensaje y redirigir
 		echo '<script language="javascript">';

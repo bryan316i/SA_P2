@@ -25,7 +25,14 @@
   </head>
 
   <body>
-
+<?php
+require_once( '../classes/Admon.php' );
+session_start();
+if( isset( $_SESSION['admon'] ) ){
+}else{
+	header( 'Location: ..');
+}
+?>
       <div class="navbar-wrapper">
       <div class="container">
 
@@ -84,7 +91,11 @@
 	
 	  <div class="row">
 		<div class="col-lg-5 col-centered">
-			<h4>Usuario: usuario</h4>
+			<h4>Usuario: 
+<?php
+	echo unserialize($_SESSION['admon'])->usuarioActual->getNombreCompleto();
+?>
+			</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
 	  
@@ -103,23 +114,44 @@
 					  <th>Fecha autorización</th>
 					  <th>Total cuotas</th>
 					  <th>Cuotas restantes</th>
-					  <th>Monto</th>
+					  <th>Monto cuotas</th>
 					  <th>Saldo restante</th>
 					</tr>
 				  </thead>
 				  <tbody>
-					<tr>
-					  <td>1</td>
-					  <td>5522215</td>
-					  <td>Q 280,000.00</td>
-					  <td>22/06/2015</td>
-					  <td>Sí</td>
-					  <td>22/06/2015</td>
-					  <td>20</td>
-					  <td>19</td>
-					  <td>Q 500.00</td>
-					  <td>Q 299,500.00</td>
-					</tr>
+<?php
+	$admon = unserialize( $_SESSION['admon'] );
+	$admon->usuarioActual->actualizarCuentas();
+	$i = 1;
+	if( isset( $admon->usuarioActual->listaCuenta ) ){
+	foreach( $admon->usuarioActual->listaCuenta as $cuenta ){
+		$cuenta->actualizarPrestamos( $admon->usuarioActual->usuario );
+		if( isset( $cuenta->listaPrestamo ) ){
+			foreach( $cuenta->listaPrestamo as $prestamo ){
+				$admon->actualizarTiposPrestamo();
+				$tipoPrestamo = $admon->getTipoPrestamo( $prestamo->totalPrestamo );
+				$cuenta->actualizarHistorial( $admon->usuarioActual->usuario );
+				$estadisticas = $cuenta->getEstadisticasPrestamo( $prestamo->id );
+				$cuotasRestantes = $tipoPrestamo->cantidadCuotas - $estadisticas[0];
+				$saldo = $prestamo->totalRecibir - $estadisticas[1];
+				echo '<tr>';
+				echo '<td>' . $i . '</td>';
+				echo '<td><a href="cuenta_historial.php?id=' . $cuenta->id . '">' . $cuenta->id . '</a></td>';
+				echo '<td>Q' . $prestamo->totalPrestamo . '</td>';
+				echo '<td>' . $prestamo->fechaRegistro . '</td>';
+				echo '<td>' . $prestamo->getAutorizado() . '</td>';
+				echo '<td>' . $prestamo->fechaAutorizado . '</td>';
+				echo '<td>' . $tipoPrestamo->cantidadCuotas . '</td>';
+				echo '<td>' . $cuotasRestantes . '</td>';
+				echo '<td>Q' . $prestamo->montoCuota . '</td>';
+				echo '<td>Q' . $saldo . '</td>';
+				echo '</tr>';
+				$i++;
+			}
+		}
+	}
+	}
+?>
 				  </tbody>
 				</table>
 			  </div>

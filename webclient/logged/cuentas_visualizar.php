@@ -115,22 +115,20 @@ if( isset( $_SESSION['admon'] ) ){
 				  <tbody>
 <?php
 	$admon = unserialize( $_SESSION['admon'] );
-	for( $i=0; $i<count($admon->usuarioActual->listaCuenta); $i++ ){
-		$cuenta = $admon->usuarioActual->listaCuenta[ $i ];
-		echo '<tr>';
-		echo '<td>' . $i+1 . '</td>';
-		echo '<td><a href="cuenta_historial.php?id=' . $cuenta->id . '>' . $cuenta->id . '</a></td>';
-		echo '<td>' . $cuenta->fechaCreacion . '</td>';
-		echo '<td>Q ' . $cuenta->saldo . '</td>';
-		echo '</tr>';
+	$admon->usuarioActual->actualizarCuentas();
+	if( isset( $admon->usuarioActual->listaCuenta ) ){
+		for( $i=0; $i<count($admon->usuarioActual->listaCuenta); $i++ ){
+			$cuenta = $admon->usuarioActual->listaCuenta[ $i ];
+			$num = $i + 1;
+			echo '<tr>';
+			echo '<td>' . $num . '</td>';
+			echo '<td><a href="cuenta_historial.php?id=' . $cuenta->id . '">' . $cuenta->id . '</a></td>';
+			echo '<td>' . $cuenta->fechaCreacion . '</td>';
+			echo '<td>Q ' . $cuenta->saldo . '</td>';
+			echo '</tr>';
+		}
 	}
 ?>
-					<tr>
-					  <td>1</td>
-					  <td><a href="cuenta_historial.php?id=5522215">5522215</a></td>
-					  <td>22/06/2015</td>
-					  <td>Q 350,000.56</td>
-					</tr>
 				  </tbody>
 				</table>
 			  </div>
