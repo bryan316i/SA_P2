@@ -1,22 +1,119 @@
 <?php 
-require_once('lib/nusoap.php');
+	require_once('lib/nusoap.php');
 
-//This is your webservice server WSDL URL address
-$wsdl = "http://localhost/WebServices/server.php?wsdl";
+	$wsdl = "http://localhost/WebServices/server.php?wsdl";
 
-//create client object
-$client = new nusoap_client($wsdl, 'wsdl');
+	$client = new nusoap_client($wsdl, 'wsdl');
 
-$err = $client->getError();
-if ($err) {
-	// Display the error
-	echo '<h2>Constructor error</h2>' . $err;
-	// At this point, you know the call that follows will fail
-        exit();
-}
+	$err = $client->getError();
+	if ($err) {
+		echo '<h2>Constructor error</h2>' . $err;
+		exit();
+	}
 
-//calling our first simple entry point
-$result1=$client->call('getIdsDocumentoIdentificacion');
-print_r($result1); 
 
+	/*$result1=$client->call('getIdsDocumentoIdentificacion');
+	print_r($result1); 
+	echo '</br>';
+
+	$result1=$client->call('getDocumentoIdentificacion', array('id'=>1));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('getIdsTipoPrestamo');
+	print_r($result1);  
+	echo '</br>';
+
+	$result1=$client->call('getTipoPrestamo', array('id'=>1));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('getIdsTipoSeguro');
+	print_r($result1);  
+	echo '</br>';
+
+	$result1=$client->call('getTipoSeguro', array('id'=>1));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('getIdsBanco');
+	print_r($result1);  
+	echo '</br>';
+
+	$result1=$client->call('getBanco', array('id'=>1));
+	print_r($result1);
+	echo '</br>';
+	
+	$result1=$client->call('addUser', array('nombre'=>'Cristian', 'apellido'=>'Mucun', 'telefono'=>51188496, 'direccion'=>'City', 'idDocIdentificacion'=>1, 'numDocIdentificacion'=>'1234', 'email'=>'c@m.com'));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('login', array('usuario'=>'usuario2', 'password'=>'pass2'));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('logout', array('usuario'=>'usuario2'));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('getInfoUsuario', array('usuario'=>'usuario2'));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('setPassword', array('usuario'=>'usuario2', 'password'=>'pass2'));
+	print_r($result1);
+	echo '</br>';
+	
+	$result1=$client->call('getIdsCuenta', array('id'=>5, 'usuario'=>'usuario5'));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('getCuenta', array('id'=>5, 'usuario'=>'usuario2'));
+	print_r($result1);
+	echo '</br>';
+
+	/*$result1=$client->call('addMovimientoLocal', array('id'=>5, 'usuario'=>'usuario2', 'tipoOperacion'=>1, 'monto'=>10000));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('addTransferenciaLocal', array('id'=>5, 'usuario'=>'usuario2', 'idCuentaSecundaria'=>21, 'tipoOperacion'=>2, 'monto'=>1000));
+	print_r($result1);
+	echo '</br>';
+	
+	$result1=$client->call('getIdsMovimiento', array('id'=>5, 'usuario'=>'usuario2'));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('getMovimiento', array('idCuenta'=>5, 'idMovimiento'=>3));
+	print_r($result1);
+	echo '</br>';	
+
+	$result1=$client->call('getIdsPrestamoCuenta', array('id'=>5, 'usuario'=>'usuario2'));
+	print_r($result1);
+	echo '</br>';*/
+
+	$result1=$client->call('getPrestamo', array('idPrestamo'=>11));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('getIdsPrestamoSinAutorizar');
+	print_r($result1);  
+	echo '</br>';
+
+	$result1=$client->call('setAutorizarPrestamo', array('id'=>2));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('getIdsSeguroCuenta', array('id'=>5, 'usuario'=>'usuario2'));
+	print_r($result1);
+	echo '</br>';
+
+	$result1=$client->call('getSeguro', array('idCuenta'=>5, 'idSeguro'=>2));
+	print_r($result1);
+	echo '</br>';
+
+	
+	$result1=$client->call('addPagoPrestamo', array('idPrestamo'=>2,'idCuenta'=>5));
+	print_r($result1);
+	echo '</br>';
 ?>
