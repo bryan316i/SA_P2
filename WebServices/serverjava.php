@@ -1,9 +1,9 @@
 <?php
 require_once ('lib/nusoap.php');
 
-$namespace = 'urn:server';
+$namespace = 'urn:serverjava';
 $server = new nusoap_server;
-$server->configureWSDL('server', $namespace);
+$server->configureWSDL('serverjava', $namespace);
 $server->wsdl->schemaTargetNamespace = $namespace;
 
 $server->wsdl->addComplexType('ArrayInt',
@@ -217,7 +217,7 @@ $server->wsdl->addComplexType(
 );
 $server->register('prueba',
 			array('nombre'=>'xsd:string'),  
-			array('respuesta' => 'xsd:string'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#prueba',  
 			'rpc', 
@@ -226,7 +226,7 @@ $server->register('prueba',
 
 $server->register('getIdsDocumentoIdentificacion',
 			array(),  
-			array('return' => 'tns:ListaIds'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getIdsDocumentoIdentificacion',  
 			'rpc', 
@@ -236,7 +236,7 @@ $server->register('getIdsDocumentoIdentificacion',
 
 $server->register('getDocumentoIdentificacion',
 			array('id' => 'xsd:int'),  
-			array('return' => 'tns:DocumentoIdentificacion'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getDocumentoIdentificacion',  
 			'rpc', 
@@ -245,7 +245,7 @@ $server->register('getDocumentoIdentificacion',
 
 $server->register('getIdsTipoPrestamo',
 			array(),  
-			array('return' => 'tns:ListaIds'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getIdsTipoPrestamo',  
 			'rpc', 
@@ -254,7 +254,7 @@ $server->register('getIdsTipoPrestamo',
 
 $server->register('getTipoPrestamo',
 			array('id' => 'xsd:int'),  
-			array('return' => 'tns:TipoPrestamo'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getTipoPrestamo',  
 			'rpc', 
@@ -263,7 +263,7 @@ $server->register('getTipoPrestamo',
 
 $server->register('getIdsTipoSeguro',
 			array(),  
-			array('return' => 'tns:ListaIds'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getIdsTipoSeguro',  
 			'rpc', 
@@ -272,7 +272,7 @@ $server->register('getIdsTipoSeguro',
 
 $server->register('getTipoSeguro',
 			array('id' => 'xsd:int'),  
-			array('return' => 'tns:TipoSeguro'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getTipoSeguro',  
 			'rpc', 
@@ -281,7 +281,7 @@ $server->register('getTipoSeguro',
 
 $server->register('getIdsBanco',
 			array(),  
-			array('return' => 'tns:ListaIds'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getIdsBanco',  
 			'rpc', 
@@ -290,7 +290,7 @@ $server->register('getIdsBanco',
 
 $server->register('getBanco',
 			array('id' => 'xsd:int'),  
-			array('return' => 'tns:Banco'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getBanco',  
 			'rpc', 
@@ -299,7 +299,7 @@ $server->register('getBanco',
 
 $server->register('addUser',
 			array('nombre' => 'xsd:string', 'apellido' => 'xsd:string', 'telefono' => 'xsd:int', 'direccion' => 'xsd:string', 'idDocIdentificacion' => 'xsd:int', 'numDocIdentificacion' => 'xsd:string', 'email' => 'xsd:string'),  
-			array('return' => 'tns:UsuarioRegistro'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#addUser',  
 			'rpc', 
@@ -308,7 +308,7 @@ $server->register('addUser',
 
 $server->register('login',
 			array('usuario' => 'xsd:string', 'password' => 'xsd:string'),  
-			array('return' => 'tns:Respuesta'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#login',  
 			'rpc', 
@@ -317,7 +317,7 @@ $server->register('login',
 
 $server->register('logout',
 			array('usuario' => 'xsd:string'),  
-			array('return' => 'tns:Respuesta'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#logout',  
 			'rpc', 
@@ -326,7 +326,7 @@ $server->register('logout',
 
 $server->register('getInfoUsuario',
 			array('usuario' => 'xsd:string'),  
-			array('return' => 'tns:Usuario'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getInfoUsuario',  
 			'rpc', 
@@ -335,7 +335,7 @@ $server->register('getInfoUsuario',
 
 $server->register('setPassword',
 			array('usuario' => 'xsd:string', 'password' => 'xsd:string'),  
-			array('return' => 'tns:Respuesta'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#setPassword',  
 			'rpc', 
@@ -344,7 +344,7 @@ $server->register('setPassword',
 
 $server->register('getIdsCuenta',
 			array('id' => 'xsd:int', 'usuario' => 'xsd:string'),  
-			array('return' => 'tns:ListaIds'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getIdsCuenta',  
 			'rpc', 
@@ -353,7 +353,7 @@ $server->register('getIdsCuenta',
 
 $server->register('getCuenta',
 			array('id' => 'xsd:int', 'usuario' => 'xsd:string'),  
-			array('return' => 'tns:Cuenta'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getCuenta',  
 			'rpc', 
@@ -362,7 +362,7 @@ $server->register('getCuenta',
 
 $server->register('addCuenta',
 			array('usuario' => 'xsd:string'),  
-			array('return' => 'tns:CuentaNueva'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#addCuenta',  
 			'rpc', 
@@ -371,7 +371,7 @@ $server->register('addCuenta',
 
 $server->register('addMovimientoLocal',
 			array('id' => 'xsd:int', 'usuario' => 'xsd:string', 'tipoOperacion' => 'xsd:int', 'monto' => 'xsd:double'),  
-			array('return' => 'tns:MovimientoLocal'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#addMovimientoLocal',  
 			'rpc', 
@@ -380,25 +380,16 @@ $server->register('addMovimientoLocal',
 
 $server->register('addTransferenciaLocal',
 			array('id' => 'xsd:int', 'usuario' => 'xsd:string', 'idCuentaSecundaria'=> 'xsd:int', 'tipoOperacion' => 'xsd:int', 'monto' => 'xsd:double'),  
-			array('return' => 'tns:MovimientoLocal'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#addTransferenciaLocal',  
 			'rpc', 
 			'encoded', 
 			'Agrega una transferencia local entre cuentas');
 
-$server->register('addTransferenciaExterna',
-			array('idCuenta' => 'xsd:int', 'idCuentaExterna' => 'xsd:int', 'tipoOperacion' => 'xsd:int', 'monto' => 'xsd:double', 'nombreBanco'=> 'xsd:string'),  
-			array('return' => 'tns:MovimientoLocal'),  
-			$namespace,   
-			$namespace.'#addTransferenciaExterna',  
-			'rpc', 
-			'encoded', 
-			'Agrega una transferencia entre cuentas externas');
-
 $server->register('getIdsMovimiento',
 			array('id' => 'xsd:int', 'usuario' => 'xsd:string'),  
-			array('return' => 'tns:ListaIds'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getIdsMovimiento',  
 			'rpc', 
@@ -407,7 +398,7 @@ $server->register('getIdsMovimiento',
 
 $server->register('getMovimiento',
 			array('idCuenta' => 'xsd:int', 'idMovimiento' => 'xsd:int'),  
-			array('return' => 'tns:Movimiento'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getMovimiento',  
 			'rpc', 
@@ -416,7 +407,7 @@ $server->register('getMovimiento',
 
 $server->register('getIdsPrestamoCuenta',
 			array('id' => 'xsd:int', 'usuario' => 'xsd:string'),  
-			array('return' => 'tns:ListaIds'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getIdsMovimiento',  
 			'rpc', 
@@ -425,7 +416,7 @@ $server->register('getIdsPrestamoCuenta',
 
 $server->register('getPrestamo',
 			array('idPrestamo' => 'xsd:int'),  
-			array('return' => 'tns:Prestamo'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getPrestamo',  
 			'rpc', 
@@ -434,7 +425,7 @@ $server->register('getPrestamo',
 
 $server->register('addPrestamo',
 			array('id' => 'xsd:int', 'usuario' => 'xsd:string', 'montoCuota' => 'xsd:double', 'totalPrestamo' => 'xsd:double', 'totalRecibir' => 'xsd:double', 'idTipoPrestamo' => 'xsd:int'),  
-			array('return' => 'tns:Respuesta'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#addPrestamo',  
 			'rpc', 
@@ -443,7 +434,7 @@ $server->register('addPrestamo',
 
 $server->register('getIdsPrestamoSinAutorizar',
 			array(),  
-			array('return' => 'tns:ListaIds'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getIdsPrestamoSinAutorizar',  
 			'rpc', 
@@ -452,7 +443,7 @@ $server->register('getIdsPrestamoSinAutorizar',
 
 $server->register('setAutorizarPrestamo',
 			array('id' => 'xsd:int'),  
-			array('return' => 'tns:Respuesta'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#setAutorizarPrestamo',  
 			'rpc', 
@@ -461,7 +452,7 @@ $server->register('setAutorizarPrestamo',
 
 $server->register('addPagoPrestamo',
 			array('idPrestamo'=> 'xsd:int','idCuenta' => 'xsd:int'),  
-			array('return' => 'tns:MovimientoLocal'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#addPagoPrestamo',  
 			'rpc', 
@@ -470,7 +461,7 @@ $server->register('addPagoPrestamo',
 
 $server->register('getIdsSeguroCuenta',
 			array('id' => 'xsd:int', 'usuario' => 'xsd:string'),  
-			array('return' => 'tns:ListaIds'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getIdsSeguroCuenta',  
 			'rpc', 
@@ -479,7 +470,7 @@ $server->register('getIdsSeguroCuenta',
 
 $server->register('getSeguro',
 			array('idCuenta' => 'xsd:int', 'idSeguro' => 'xsd:int'),  
-			array('return' => 'tns:Seguro'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#getSeguro',  
 			'rpc', 
@@ -489,7 +480,7 @@ $server->register('getSeguro',
   
 $server->register('addSeguro',
 			array('idCuenta' => 'xsd:int','automatico' => 'xsd:int', 'monto' => 'xsd:double', 'idTipoSeguro'=> 'xsd:int'),  
-			array('return' => 'tns:Respuesta'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#addSeguro',  
 			'rpc', 
@@ -499,7 +490,7 @@ $server->register('addSeguro',
 
 $server->register('addPagoSeguro',
 			array('idCuenta' => 'xsd:int','idSeguro' => 'xsd:int'),  
-			array('return' => 'tns:MovimientoLocal'),  
+			array('return' => 'xsd:string'),  
 			$namespace,   
 			$namespace.'#addPagoSeguro',  
 			'rpc', 
@@ -512,17 +503,20 @@ function getIdsDocumentoIdentificacion() {
 	$stid = oci_parse($conn, 'SELECT iddocumentoidentificacion FROM documentoidentificacion');
 	oci_execute($stid);
 
-	$ids = array();
+	$ids = '';
 	
 	while (($row = oci_fetch_array($stid)) != false) {		
 		if ($row['IDDOCUMENTOIDENTIFICACION'] !== null){
 			$cantidad++;
-			$ids[] = $row['IDDOCUMENTOIDENTIFICACION'];
+			if($cantidad > 1){
+				$ids = $ids.'&';
+			}
+			$ids = $ids.$row['IDDOCUMENTOIDENTIFICACION'];
 		}
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('cantidad'=>$cantidad, 'array'=>$ids);
+	return $cantidad.','.$ids;
 }
 
  
@@ -550,8 +544,7 @@ function getDocumentoIdentificacion($id) {
 	oci_free_statement($stid);
 	oci_close($conn);
 
-	return array('resultado'=>$resultado, 'nombre'=>$nombre);
-
+	return $resultado.','.$nombre;
 }
 
 function getIdsTipoPrestamo() {
@@ -560,17 +553,20 @@ function getIdsTipoPrestamo() {
 	$stid = oci_parse($conn, 'SELECT idtipoprestamo FROM tipoprestamo');
 	oci_execute($stid);
 
-	$ids = array();
+	$ids = '';
 	
 	while (($row = oci_fetch_array($stid)) != false) {		
 		if ($row['IDTIPOPRESTAMO'] !== null){
 			$cantidad++;
-			$ids[] = $row['IDTIPOPRESTAMO'];
+			if($cantidad > 1){
+				$ids = $ids.'&';
+			}
+			$ids = $ids.$row['IDTIPOPRESTAMO'];
 		}
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('cantidad'=>$cantidad, 'array'=>$ids);
+	return $cantidad.','.$ids;
 }
 
 function getTipoPrestamo($id) {
@@ -596,9 +592,10 @@ function getTipoPrestamo($id) {
 	oci_free_statement($stid);
 	oci_close($conn);
 
-	return array('resultado'=>$resultado, 'min'=>$min, 'max'=>$max, 'tasaInteres'=>$tasaInteres, 'cantidadCuotas'=>$cantidadCuotas);
+	return $resultado.','.$min.','.$max.','.$tasaInteres.','.$cantidadCuotas;
 
 }
+
 
 function getIdsTipoSeguro() {
 	include 'confBD.php';
@@ -616,7 +613,7 @@ function getIdsTipoSeguro() {
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('cantidad'=>$cantidad, 'array'=>$ids);
+	return $cantidad.','.$ids;
 }
 
 function getTipoSeguro($id) {
@@ -638,7 +635,7 @@ function getTipoSeguro($id) {
 	oci_free_statement($stid);
 	oci_close($conn);
 
-	return array('resultado'=>$resultado, 'nombre'=>$nombre, 'descripcion'=>$descripcion);
+	return $resultado.','.$nombre.','.$descripcion;
 
 }
 
@@ -658,7 +655,7 @@ function getIdsBanco() {
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('cantidad'=>$cantidad, 'array'=>$ids);
+	return $cantidad.','.$ids;
 }
 
 function getBanco($id) {
@@ -680,7 +677,7 @@ function getBanco($id) {
 	oci_free_statement($stid);
 	oci_close($conn);
 
-	return array('resultado'=>$resultado, 'nombre'=>$nombre, 'direccionIP'=>$direccionIP, 'puerto'=>$puerto);
+	return $resultado.','.$nombre.','.$direccionIP.','.$puerto;
 
 }
 
@@ -709,7 +706,7 @@ function addUser($nombre, $apellido, $telefono, $direccion, $idDocIdentificacion
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje, 'usuario'=>'usuario'.$idUsuario, 'password'=>'pass'.$idUsuario);
+	return $resultado.','.$mensaje.',usuario'.$idUsuario.',pass'.$idUsuario;
 }
 
 function login($usuario, $password) {
@@ -751,7 +748,7 @@ function login($usuario, $password) {
 	}
 	
 	oci_close($conn);
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje);
+	return $resultado.','.$mensaje;
 }
 
 function logout($usuario) {
@@ -787,7 +784,7 @@ function logout($usuario) {
 
 	oci_close($conn);
 
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje);
+	return $resultado.','.$mensaje;
 }
 
 function getInfoUsuario($id) {
@@ -823,7 +820,7 @@ function getInfoUsuario($id) {
 	oci_free_statement($stid);
 	oci_close($conn);
 
-	return array('resultado'=>$resultado, 'id'=>$idUsuario, 'nombre'=>$nombre, 'apellido'=>$apellido, 'telefono'=>$telefono, 'direccion'=>$direccion, 'cambiarPass'=>$cambiarPass, 'fechaRegistro'=>$fechaRegistro, 'idDocIdentificacion'=>$idDocIdentificacion, 'numDocIdentificacion'=>$numDocIdentificacion, 'email'=>$email);
+	return $resultado.','.$idUsuario.','.$nombre.','.$apellido.','.$telefono.','.$direccion.','.$cambiarPass.','.$fechaRegistro.','.$idDocIdentificacion.','.$numDocIdentificacion.','.$email;
 
 }
 
@@ -841,7 +838,7 @@ function setPassword($usuario, $password) {
 		$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
 	}
 	
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje);
+	return $resultado.','.$mensaje;
 
 }
 
@@ -866,13 +863,13 @@ function getIdsCuenta($id, $usuario) {
 	}
 	
 	oci_close($conn);
-	return array('cantidad'=>$cantidad, 'array'=>$ids);
+	return $cantidad.','.$ids;
 }
 
 function getCuenta($id, $usuario) {
 	include 'confBD.php';
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT to_char(fechaCreacion, \'DD/MM/YYYY HH24:MI:SS\') fechacreacion_ , getSaldo('.$id.') saldo FROM cuenta WHERE idCuenta = '.$id.' AND idestado = 1 AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\')');
+	$stid = oci_parse($conn, 'SELECT to_char(fechaCreacion, \'DD/MM/YYYY HH24:MI:SS\') fechacreacion_ , getSaldo('.$id.') saldo FROM cuenta WHERE idCuenta = '.$id.' AND idestado = 1');
 	oci_execute($stid);
 
 	if (($row = oci_fetch_array($stid)) != false) {	
@@ -881,7 +878,7 @@ function getCuenta($id, $usuario) {
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('fechaCreacion'=>$fechaCreacion, 'saldo'=>$saldo);
+	return $fechaCreacion.','.$saldo;
 }
 
 
@@ -922,199 +919,112 @@ function addCuenta($usuario) {
 		}
 	}	
 
-	return array('resultado'=>$resultado, 'id'=>$idCuenta, 'fechaCreacion'=>$fechaCreacion);
+	return $resultado.','.$idCuenta.','.$fechaCreacion;
 }
 
 function addMovimientoLocal($id, $usuario, $tipoOperacion, $monto) {
 	include 'confBD.php';
-	$cuenta = 0;
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT idcuenta FROM cuenta WHERE idcuenta ='.$id.' AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\')');
+	$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
 	oci_execute($stid);
 	if (($row = oci_fetch_array($stid)) != false) {	
-		$cuenta = $row['IDCUENTA'];
+		$idMovimiento = $row['NEXTVAL'];
 	}	
 	oci_free_statement($stid);
-	if($cuenta != 0){
-		$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
+	if($tipoOperacion == 2){
+		$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$id.')-'.$monto.' s FROM dual) WHERE s>0');
 		oci_execute($stid);
 		if (($row = oci_fetch_array($stid)) != false) {	
-			$idMovimiento = $row['NEXTVAL'];
+			$saldoSuficiente = $row['1'];
 		}	
 		oci_free_statement($stid);
-		if($tipoOperacion == 2){
-			$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$id.')-'.$monto.' s FROM dual) WHERE s>0');
+	}else{
+		$saldoSuficiente = 1;
+	}	
+
+	if($saldoSuficiente == 1){
+		$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', null, null, null, '.$tipoOperacion.', null, null)');	
+		
+		if(oci_execute($stid)){
+			oci_free_statement($stid);
+			$stid = oci_parse($conn, 'SELECT getSaldo('.$id.') s FROM dual');
 			oci_execute($stid);
 			if (($row = oci_fetch_array($stid)) != false) {	
-				$saldoSuficiente = $row['1'];
+				$saldo = $row['S'];
 			}	
 			oci_free_statement($stid);
-		}else{
-			$saldoSuficiente = 1;
-		}	
 
-		if($saldoSuficiente == 1){
-			$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', null, null, null, '.$tipoOperacion.', null, null)');	
-		
-			if(oci_execute($stid)){
-				oci_free_statement($stid);
-				$stid = oci_parse($conn, 'SELECT getSaldo('.$id.') s FROM dual');
-				oci_execute($stid);
-				if (($row = oci_fetch_array($stid)) != false) {	
-					$saldo = $row['S'];
-				}	
-				oci_free_statement($stid);
-
-				$resultado = 1;
-				$mensaje = "Movimiento realizado. Correlativo: ".$idMovimiento;
-			}else{
-				$resultado = 2;
-				$error = oci_error($stid);
-				$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-				oci_free_statement($stid);
-			}
-				
+			$resultado = 1;
+			$mensaje = "Movimiento realizado. Correlativo: ".$idMovimiento;
 		}else{
 			$resultado = 2;
-			$mensaje = "Error: Saldo insuficiente";
-			$saldo = -1;
+			$error = oci_error($stid);
+			$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
+			oci_free_statement($stid);
 		}
+				
 	}else{
-		$resultado = 3;
-		$mensaje = "Error: La cuenta no pertenece a este usuario";
+		$resultado = 2;
+		$mensaje = "Error: Saldo insuficiente";
+		$saldo = -1;
 	}
 	oci_close($conn);
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje, 'saldo'=>$saldo);
+	return $resultado.','.$mensaje.','.$saldo;
 }
 
 
 function addTransferenciaLocal($id, $usuario, $idCuentaSecundaria, $tipoOperacion, $monto) {
 	include 'confBD.php';
-	$cuenta = 0;
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT idcuenta FROM cuenta WHERE idcuenta ='.$id.' AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\')');
+
+	$stid = oci_parse($conn, 'SELECT 1 FROM cuenta where idcuenta = '.$idCuentaSecundaria);
 	oci_execute($stid);
 	if (($row = oci_fetch_array($stid)) != false) {	
-		$cuenta = $row['IDCUENTA'];
-	}	
-	oci_free_statement($stid);
-	if($cuenta != 0){
-
-		$stid = oci_parse($conn, 'SELECT 1 FROM cuenta where idcuenta = '.$idCuentaSecundaria);
-		oci_execute($stid);
-		if (($row = oci_fetch_array($stid)) != false) {	
-			$existeOtraCuenta = $row['1'];
-		}	
-		oci_free_statement($stid);
-
-		if($existeOtraCuenta == 1){
-			$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
-			oci_execute($stid);
-			if (($row = oci_fetch_array($stid)) != false) {	
-				$idMovimiento = $row['NEXTVAL'];
-			}	
-			oci_free_statement($stid);
-			$saldoSuficiente = 0;
-			if($tipoOperacion == 1){
-				$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$idCuentaSecundaria.')-'.$monto.' s FROM dual) WHERE s>0');
-				oci_execute($stid);
-				if (($row = oci_fetch_array($stid)) != false) {	
-					$saldoSuficiente = $row['1'];
-				}	
-				oci_free_statement($stid);
-			}else{
-				$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$id.')-'.$monto.' s FROM dual) WHERE s>0');
-				oci_execute($stid);
-				if (($row = oci_fetch_array($stid)) != false) {	
-					$saldoSuficiente = $row['1'];
-				}	
-				oci_free_statement($stid);
-			}	
-
-			if($saldoSuficiente == 1){
-				$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', '.$idCuentaSecundaria.', null, null, '.$tipoOperacion.', null, null)');	
-			
-				if(oci_execute($stid)){
-					oci_free_statement($stid);
-				
-					$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
-					oci_execute($stid);
-					if (($row = oci_fetch_array($stid)) != false) {	
-						$idMovimiento2 = $row['NEXTVAL'];
-					}	
-					oci_free_statement($stid);
-
-					$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento2.',  (SELECT sysdate FROM dual), '.$monto.', '.$idCuentaSecundaria.', '.$id.', null, null, '.(3-$tipoOperacion).', null, null)');	
-					oci_execute($stid);
-					oci_free_statement($stid);
-
-					$stid = oci_parse($conn, 'SELECT getSaldo('.$id.') s FROM dual');
-					oci_execute($stid);
-					if (($row = oci_fetch_array($stid)) != false) {	
-						$saldo = $row['S'];
-					}	
-					oci_free_statement($stid);
-
-					$resultado = 1;
-					$mensaje = "Movimiento realizado. Correlativo: ".$idMovimiento;
-				}else{
-					$resultado = 2;
-					$error = oci_error($stid);
-					$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-					oci_free_statement($stid);
-				}
-				
-			}else{
-				if($tipoOperacion == 1){
-					$resultado = 4;
-					$mensaje = "Error: Saldo insuficiente de la otra cuenta";
-					$saldo = -1;
-				}else{
-					$resultado = 3;
-					$mensaje = "Error: Saldo insuficiente de la cuenta local";
-					$saldo = -1;
-				}
-		
-			}
-		}else{
-			$resultado = 2;
-			$mensaje = "Error: la otra cuenta no existe";
-			$saldo = -1;
-		}
-	}else{
-		$resultado = 3;
-		$mensaje = "Error: La cuenta no pertenece a este usuario";
-	}
-	oci_close($conn);
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje, 'saldo'=>$saldo);
-}
-
-function addTransferenciaExterna($id, $idCuentaSecundaria, $tipoOperacion, $monto, $nombreBanco) {
-	include 'confBD.php';
-	$cuenta = 0;
-	$conn = oci_connect($userBD, $passBD, $ipBD);
-	
-	$stid = oci_parse($conn, 'SELECT 1 FROM cuenta where idcuenta = '.$id);
-	oci_execute($stid);
-	if (($row = oci_fetch_array($stid)) != false) {	
-		$existeCuenta = $row['1'];
+		$existeOtraCuenta = $row['1'];
 	}	
 	oci_free_statement($stid);
 
-	if($existeCuenta == 1){
+	if($existeOtraCuenta == 1){
 		$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
 		oci_execute($stid);
 		if (($row = oci_fetch_array($stid)) != false) {	
 			$idMovimiento = $row['NEXTVAL'];
 		}	
 		oci_free_statement($stid);
-
+		$saldoSuficiente = 0;
 		if($tipoOperacion == 1){
+			$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$idCuentaSecundaria.')-'.$monto.' s FROM dual) WHERE s>0');
+			oci_execute($stid);
+			if (($row = oci_fetch_array($stid)) != false) {	
+				$saldoSuficiente = $row['1'];
+			}	
+			oci_free_statement($stid);
+		}else{
+			$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$id.')-'.$monto.' s FROM dual) WHERE s>0');
+			oci_execute($stid);
+			if (($row = oci_fetch_array($stid)) != false) {	
+				$saldoSuficiente = $row['1'];
+			}	
+			oci_free_statement($stid);
+		}	
+
+		if($saldoSuficiente == 1){
+			$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', '.$idCuentaSecundaria.', null, null, '.$tipoOperacion.', null, null)');	
 			
-			$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', '.$idCuentaSecundaria.', null, null, '.$tipoOperacion.', null, (SELECT idBanco FROM banco where UPPER(nombre) = \''.strtoupper($nombreBanco).'\'))');	
-		
 			if(oci_execute($stid)){
 				oci_free_statement($stid);
+				
+				$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
+				oci_execute($stid);
+				if (($row = oci_fetch_array($stid)) != false) {	
+					$idMovimiento2 = $row['NEXTVAL'];
+				}	
+				oci_free_statement($stid);
+
+				$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento2.',  (SELECT sysdate FROM dual), '.$monto.', '.$idCuentaSecundaria.', '.$id.', null, null, '.(3-$tipoOperacion).', null, null)');	
+				oci_execute($stid);
+				oci_free_statement($stid);
+
 				$stid = oci_parse($conn, 'SELECT getSaldo('.$id.') s FROM dual');
 				oci_execute($stid);
 				if (($row = oci_fetch_array($stid)) != false) {	
@@ -1130,109 +1040,32 @@ function addTransferenciaExterna($id, $idCuentaSecundaria, $tipoOperacion, $mont
 				$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
 				oci_free_statement($stid);
 			}
+				
 		}else{
-			$saldoSuficiente = -1;
-			$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$id.')-'.$monto.' s FROM dual) WHERE s>0');
-			oci_execute($stid);
-			if (($row = oci_fetch_array($stid)) != false) {	
-				$saldoSuficiente = $row['1'];
-			}	
-			oci_free_statement($stid);	
-		
-			if($saldoSuficiente == 1){
-				$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', '.$idCuentaSecundaria.', null, null, '.$tipoOperacion.', null, (SELECT idBanco FROM banco where UPPER(nombre) = \''.strtoupper($nombreBanco).'\'))');	
-			
-				if(oci_execute($stid)){
-					oci_free_statement($stid);
-					
-					$ip = -1;
-					$stid = oci_parse($conn, 'SELECT direccionIP FROM banco where UPPER(nombre) = \''.strtoupper($nombreBanco).'\'');
-					oci_execute($stid);
-					if (($row = oci_fetch_array($stid)) != false) {	
-						$ip = $row['DIRECCIONIP'];
-					}	
-					oci_free_statement($stid);
-
-					$client = new nusoap_client( $ip, 'wsdl' );
-					$result = $client->call( 'DepositoCuenta', array( "NoCuenta" => $idCuentaSecundaria, "Saldo" => floatval($monto) ) );
-					if( ! $client->fault && ! $client->getError() ){
-						$resultadoResult = $result[ "DepositoCuenta"."Result" ];
-						$res = $resultadoResult['Contenido'];
-						$resultado = $res['Respuesta'];
-						$mensaje = $res['Mensaje'];
-						$idTrans = $res['Transaccion'];
-				
-						
-						if( strcmp( $resultado, "True" ) == 0 ){
-							oci_free_statement($stid);
-							$stid = oci_parse($conn, 'SELECT getSaldo('.$id.') s FROM dual');
-							oci_execute($stid);
-							if (($row = oci_fetch_array($stid)) != false) {	
-								$saldo = $row['S'];
-							}	
-							oci_free_statement($stid);
-							$resultado = 1;
-							$mensaje = 'Movimiento realizado correctamente. ID transferencia'.$idMovimiento;
-							
-						}else{
-
-							$stid = oci_parse($conn, 'DELETE FROM movimiento WHERE idMovimiento = '.$idMovimiento);
-							oci_execute($stid);
-							if(!oci_execute($stid)){	
-								$resultado = 2;
-								$error = oci_error($stid);
-								$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-								oci_free_statement($stid);
-							}	
-							oci_free_statement($stid);
-
-							$resultado = 3;
-							$mensaje = "Error en transferencia ".$client->getError();
-						}
-					}else{
-						$stid = oci_parse($conn, 'DELETE FROM movimiento WHERE idMovimiento = '.$idMovimiento);
-						oci_execute($stid);
-						if(!oci_execute($stid)){	
-							$resultado = 2;
-							$error = oci_error($stid);
-							$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-							oci_free_statement($stid);
-						}	
-						oci_free_statement($stid);
-						
-						$resultado = 3;
-						$mensaje = "Error al realizar la transferencia: ".$client->getError();
-						$saldo = -1;		
-					}
-
-					
-				}else{
-					$resultado = 2;
-					$error = oci_error($stid);
-					$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-					oci_free_statement($stid);
-				}
-				
+			if($tipoOperacion == 1){
+				$resultado = 4;
+				$mensaje = "Error: Saldo insuficiente de la otra cuenta";
+				$saldo = -1;
 			}else{
 				$resultado = 3;
 				$mensaje = "Error: Saldo insuficiente de la cuenta local";
-				$saldo = -1;		
+				$saldo = -1;
 			}
+		
 		}
 	}else{
 		$resultado = 2;
-		$mensaje = "Error: la cuenta ".$id." no existe";
+		$mensaje = "Error: la otra cuenta no existe";
 		$saldo = -1;
 	}
-
 	oci_close($conn);
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje, 'saldo'=>$saldo);
+	return $resultado.','.$mensaje.','.$saldo;
 }
 
 function getIdsMovimiento($id, $usuario) {
 	include 'confBD.php';
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT idMovimiento FROM movimiento where idCuenta = '.$id.' AND idCuenta = (SELECT idCuenta FROM cuenta where idCuenta = '.$id.' AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\')) ORDER BY idMovimiento DESC');
+	$stid = oci_parse($conn, 'SELECT idMovimiento FROM movimiento where idCuenta = '.$id);
 	oci_execute($stid);
 
 	$ids = array();
@@ -1245,7 +1078,7 @@ function getIdsMovimiento($id, $usuario) {
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('cantidad'=>$cantidad, 'array'=>$ids);
+	return $cantidad.','.$ids;
 }
 
 function getMovimiento($idCuenta, $idMovimiento) {
@@ -1275,14 +1108,14 @@ function getMovimiento($idCuenta, $idMovimiento) {
 	oci_free_statement($stid);
 	oci_close($conn);
 
-	return array('fecha'=>$fecha, 'monto'=>$monto, 'tipo'=>$tipo, 'idCuentaSecundaria'=>$idCuentaSecundaria, 'idBancoCuentaSecundaria'=>$idBancoCuentaSecundaria,'idPrestamo'=>$idPrestamo,'idSeguro'=>$idSeguro);
+	return $fecha.','.$monto.','.$tipo.','.$idCuentaSecundaria.','.$idBancoCuentaSecundaria.','.$idPrestamo.','.$idSeguro;
 
 }
 
 function getIdsPrestamoCuenta($id, $usuario) {
 	include 'confBD.php';
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT idPrestamo FROM prestamo where idCuenta = '.$id.' AND idCuenta = (SELECT idCuenta FROM cuenta where idCuenta = '.$id.' AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\'))');
+	$stid = oci_parse($conn, 'SELECT idPrestamo FROM prestamo where idCuenta = '.$id);
 	oci_execute($stid);
 
 	$ids = array();
@@ -1295,7 +1128,7 @@ function getIdsPrestamoCuenta($id, $usuario) {
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('cantidad'=>$cantidad, 'array'=>$ids);
+	return $cantidad.','.$ids;
 }
 
 function getPrestamo($idPrestamo) {
@@ -1326,48 +1159,36 @@ function getPrestamo($idPrestamo) {
 	oci_free_statement($stid);
 	oci_close($conn);
 
-	return array('montoCuota'=>$montoCuota, 'totalPrestamo'=>$totalPrestamo, 'totalRecibir'=>$totalRecibir, 'fechaRegistro'=>$fechaRegistro,'autorizado'=>$autorizado,'fechaAutorizacion'=>$fechaAutorizacion,'idTipoPrestamo'=>$idTipoPrestamo);
+	return $montoCuota.','.$totalPrestamo.','.$totalRecibir.','.$fechaRegistro.','.$autorizado.','.$fechaAutorizacion.','.$idTipoPrestamo;
 
 }
 
 function addPrestamo($id, $usuario, $montoCuota, $totalPrestamo, $totalRecibir, $idTipoPrestamo) {
 	include 'confBD.php';
 
-	$cuenta = 0;
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT idcuenta FROM cuenta WHERE idcuenta ='.$id.' AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\')');
+
+	$stid = oci_parse($conn, 'SELECT id_prestamo.nextval FROM dual');
 	oci_execute($stid);
 	if (($row = oci_fetch_array($stid)) != false) {	
-		$cuenta = $row['IDCUENTA'];
-	}	
-	oci_free_statement($stid);
-	if($cuenta != 0){
-
-		$stid = oci_parse($conn, 'SELECT id_prestamo.nextval FROM dual');
-		oci_execute($stid);
-		if (($row = oci_fetch_array($stid)) != false) {	
-			$idPrestamo = $row['NEXTVAL'];
-		}
-	
-		oci_free_statement($stid);
-	
-		$stid = oci_parse($conn, 'INSERT INTO prestamo VALUES ('.$idPrestamo.', '.$montoCuota.', '.$totalPrestamo.', '.$totalRecibir.', (SELECT sysdate FROM dual), '.$id.', 1, '.$idTipoPrestamo.', 0, null)');
-
-		if(oci_execute($stid)){
-			$resultado = 1;
-			$mensaje = "Exito: prestamo creado. Correlativo:".$idPrestamo;
-		}else{
-			$resultado = 2;
-			$error = oci_error($stid);
-			$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-		}
-		oci_free_statement($stid);
-	}else{
-		$resultado = 3;
-		$mensaje = "Error: La cuenta no pertenece a este usuario";
+		$idPrestamo = $row['NEXTVAL'];
 	}
+	
+	oci_free_statement($stid);
+	
+	$stid = oci_parse($conn, 'INSERT INTO prestamo VALUES ('.$idPrestamo.', '.$montoCuota.', '.$totalPrestamo.', '.$totalRecibir.', (SELECT sysdate FROM dual), '.$id.', 1, '.$idTipoPrestamo.', 0, null)');
+
+	if(oci_execute($stid)){
+		$resultado = 1;
+		$mensaje = "Exito: prestamo creado. Correlativo:".$idPrestamo;
+	}else{
+		$resultado = 2;
+		$error = oci_error($stid);
+		$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
+	}
+	oci_free_statement($stid);
 	oci_close($conn);
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje);
+	return $resultado.','.$mensaje;
 }
 
 function getIdsPrestamoSinAutorizar() {
@@ -1386,7 +1207,7 @@ function getIdsPrestamoSinAutorizar() {
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('cantidad'=>$cantidad, 'array'=>$ids);
+	return $cantidad.','.$ids;
 }
 
 function setAutorizarPrestamo($id) {
@@ -1449,7 +1270,7 @@ function setAutorizarPrestamo($id) {
 		$resultado = 3;
 		$mensaje = "Error: el prestamo no existe";
 	}
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje);
+	return $resultado.','.$mensaje;
 
 }
 
@@ -1522,7 +1343,7 @@ function addPagoPrestamo($idPrestamo, $idCuenta) {
 		$mensaje = "Error: el prestamo ya se encuentra pagado totalmente";
 	}
 	oci_close($conn);
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje, 'saldo'=>$saldo);
+	return $resultado.','.$mensaje.','.$saldo;
 }
 
 
@@ -1543,7 +1364,7 @@ function getIdsSeguroCuenta($id, $usuario) {
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('cantidad'=>$cantidad, 'array'=>$ids);
+	return $cantidad.','.$ids;
 }
 
 function getSeguro($idCuenta, $idSeguro) {
@@ -1569,7 +1390,7 @@ function getSeguro($idCuenta, $idSeguro) {
 	oci_free_statement($stid);
 	oci_close($conn);
 
-	return array('automatico'=>$automatico, 'fechaRegistro'=>$fechaRegistro,'monto'=>$monto,'idTipoSeguro'=>$idTipoSeguro);
+	return $automatico.','.$fechaRegistro.','.$monto.','.$idTipoSeguro;
 
 }
 
@@ -1598,7 +1419,7 @@ function addSeguro($idCuenta, $automatico, $monto, $idTipoSeguro) {
 	}
 	oci_free_statement($stid);
 	oci_close($conn);
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje);
+	return $resultado.','.$mensaje;
 }
 
 function addPagoSeguro($idCuenta, $idSeguro) {
@@ -1658,8 +1479,9 @@ function addPagoSeguro($idCuenta, $idSeguro) {
 		$mensaje = "Error: el seguro no existe o no se encuentra activo.";
 	}
 	oci_close($conn);
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje, 'saldo'=>$saldo);
+	return $resultado.','.$mensaje.','.$saldo;
 }
+
 
 
 

@@ -90,11 +90,23 @@
 
 	$result1=$client->call('getIdsPrestamoCuenta', array('id'=>5, 'usuario'=>'usuario2'));
 	print_r($result1);
-	echo '</br>';*/
+	echo '</br>';
+
 
 	$result1=$client->call('getPrestamo', array('idPrestamo'=>11));
 	print_r($result1);
 	echo '</br>';
+
+
+echo '<h2>Request</h2>';
+echo '<pre>' . htmlspecialchars($client->request, ENT_QUOTES) . '</pre>';
+echo '<h2>Response</h2>';
+echo '<pre>' . htmlspecialchars($client->response, ENT_QUOTES) . '</pre>';
+
+
+echo '<h2>Debug</h2>';
+echo '<pre>' . htmlspecialchars($client->debug_str, ENT_QUOTES) . '</pre>';
+
 
 	$result1=$client->call('getIdsPrestamoSinAutorizar');
 	print_r($result1);  
@@ -110,10 +122,10 @@
 
 	$result1=$client->call('getSeguro', array('idCuenta'=>5, 'idSeguro'=>2));
 	print_r($result1);
-	echo '</br>';
+	echo '</br>';*/
 
 	
-	$result1=$client->call('addPagoPrestamo', array('idPrestamo'=>2,'idCuenta'=>5));
+	$result1=$client->call('addTransferenciaExterna', array('idCuenta'=>5,'idCuentaExterna'=>41,'tipoOperacion'=>2,'monto'=>1000,'nombreBanco'=>'ASP'));
 	print_r($result1);
 	echo '</br>';
 ?>

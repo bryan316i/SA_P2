@@ -387,15 +387,6 @@ $server->register('addTransferenciaLocal',
 			'encoded', 
 			'Agrega una transferencia local entre cuentas');
 
-$server->register('addTransferenciaExterna',
-			array('idCuenta' => 'xsd:int', 'idCuentaExterna' => 'xsd:int', 'tipoOperacion' => 'xsd:int', 'monto' => 'xsd:double', 'nombreBanco'=> 'xsd:string'),  
-			array('return' => 'tns:MovimientoLocal'),  
-			$namespace,   
-			$namespace.'#addTransferenciaExterna',  
-			'rpc', 
-			'encoded', 
-			'Agrega una transferencia entre cuentas externas');
-
 $server->register('getIdsMovimiento',
 			array('id' => 'xsd:int', 'usuario' => 'xsd:string'),  
 			array('return' => 'tns:ListaIds'),  
@@ -872,7 +863,7 @@ function getIdsCuenta($id, $usuario) {
 function getCuenta($id, $usuario) {
 	include 'confBD.php';
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT to_char(fechaCreacion, \'DD/MM/YYYY HH24:MI:SS\') fechacreacion_ , getSaldo('.$id.') saldo FROM cuenta WHERE idCuenta = '.$id.' AND idestado = 1 AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\')');
+	$stid = oci_parse($conn, 'SELECT to_char(fechaCreacion, \'DD/MM/YYYY HH24:MI:SS\') fechacreacion_ , getSaldo('.$id.') saldo FROM cuenta WHERE idCuenta = '.$id.' AND idestado = 1');
 	oci_execute($stid);
 
 	if (($row = oci_fetch_array($stid)) != false) {	
@@ -927,61 +918,49 @@ function addCuenta($usuario) {
 
 function addMovimientoLocal($id, $usuario, $tipoOperacion, $monto) {
 	include 'confBD.php';
-	$cuenta = 0;
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT idcuenta FROM cuenta WHERE idcuenta ='.$id.' AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\')');
+	$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
 	oci_execute($stid);
 	if (($row = oci_fetch_array($stid)) != false) {	
-		$cuenta = $row['IDCUENTA'];
+		$idMovimiento = $row['NEXTVAL'];
 	}	
 	oci_free_statement($stid);
-	if($cuenta != 0){
-		$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
+	if($tipoOperacion == 2){
+		$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$id.')-'.$monto.' s FROM dual) WHERE s>0');
 		oci_execute($stid);
 		if (($row = oci_fetch_array($stid)) != false) {	
-			$idMovimiento = $row['NEXTVAL'];
+			$saldoSuficiente = $row['1'];
 		}	
 		oci_free_statement($stid);
-		if($tipoOperacion == 2){
-			$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$id.')-'.$monto.' s FROM dual) WHERE s>0');
+	}else{
+		$saldoSuficiente = 1;
+	}	
+
+	if($saldoSuficiente == 1){
+		$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', null, null, null, '.$tipoOperacion.', null, null)');	
+		
+		if(oci_execute($stid)){
+			oci_free_statement($stid);
+			$stid = oci_parse($conn, 'SELECT getSaldo('.$id.') s FROM dual');
 			oci_execute($stid);
 			if (($row = oci_fetch_array($stid)) != false) {	
-				$saldoSuficiente = $row['1'];
+				$saldo = $row['S'];
 			}	
 			oci_free_statement($stid);
-		}else{
-			$saldoSuficiente = 1;
-		}	
 
-		if($saldoSuficiente == 1){
-			$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', null, null, null, '.$tipoOperacion.', null, null)');	
-		
-			if(oci_execute($stid)){
-				oci_free_statement($stid);
-				$stid = oci_parse($conn, 'SELECT getSaldo('.$id.') s FROM dual');
-				oci_execute($stid);
-				if (($row = oci_fetch_array($stid)) != false) {	
-					$saldo = $row['S'];
-				}	
-				oci_free_statement($stid);
-
-				$resultado = 1;
-				$mensaje = "Movimiento realizado. Correlativo: ".$idMovimiento;
-			}else{
-				$resultado = 2;
-				$error = oci_error($stid);
-				$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-				oci_free_statement($stid);
-			}
-				
+			$resultado = 1;
+			$mensaje = "Movimiento realizado. Correlativo: ".$idMovimiento;
 		}else{
 			$resultado = 2;
-			$mensaje = "Error: Saldo insuficiente";
-			$saldo = -1;
+			$error = oci_error($stid);
+			$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
+			oci_free_statement($stid);
 		}
+				
 	}else{
-		$resultado = 3;
-		$mensaje = "Error: La cuenta no pertenece a este usuario";
+		$resultado = 2;
+		$mensaje = "Error: Saldo insuficiente";
+		$saldo = -1;
 	}
 	oci_close($conn);
 	return array('resultado'=>$resultado, 'mensaje'=>$mensaje, 'saldo'=>$saldo);
@@ -990,131 +969,56 @@ function addMovimientoLocal($id, $usuario, $tipoOperacion, $monto) {
 
 function addTransferenciaLocal($id, $usuario, $idCuentaSecundaria, $tipoOperacion, $monto) {
 	include 'confBD.php';
-	$cuenta = 0;
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT idcuenta FROM cuenta WHERE idcuenta ='.$id.' AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\')');
+
+	$stid = oci_parse($conn, 'SELECT 1 FROM cuenta where idcuenta = '.$idCuentaSecundaria);
 	oci_execute($stid);
 	if (($row = oci_fetch_array($stid)) != false) {	
-		$cuenta = $row['IDCUENTA'];
-	}	
-	oci_free_statement($stid);
-	if($cuenta != 0){
-
-		$stid = oci_parse($conn, 'SELECT 1 FROM cuenta where idcuenta = '.$idCuentaSecundaria);
-		oci_execute($stid);
-		if (($row = oci_fetch_array($stid)) != false) {	
-			$existeOtraCuenta = $row['1'];
-		}	
-		oci_free_statement($stid);
-
-		if($existeOtraCuenta == 1){
-			$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
-			oci_execute($stid);
-			if (($row = oci_fetch_array($stid)) != false) {	
-				$idMovimiento = $row['NEXTVAL'];
-			}	
-			oci_free_statement($stid);
-			$saldoSuficiente = 0;
-			if($tipoOperacion == 1){
-				$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$idCuentaSecundaria.')-'.$monto.' s FROM dual) WHERE s>0');
-				oci_execute($stid);
-				if (($row = oci_fetch_array($stid)) != false) {	
-					$saldoSuficiente = $row['1'];
-				}	
-				oci_free_statement($stid);
-			}else{
-				$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$id.')-'.$monto.' s FROM dual) WHERE s>0');
-				oci_execute($stid);
-				if (($row = oci_fetch_array($stid)) != false) {	
-					$saldoSuficiente = $row['1'];
-				}	
-				oci_free_statement($stid);
-			}	
-
-			if($saldoSuficiente == 1){
-				$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', '.$idCuentaSecundaria.', null, null, '.$tipoOperacion.', null, null)');	
-			
-				if(oci_execute($stid)){
-					oci_free_statement($stid);
-				
-					$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
-					oci_execute($stid);
-					if (($row = oci_fetch_array($stid)) != false) {	
-						$idMovimiento2 = $row['NEXTVAL'];
-					}	
-					oci_free_statement($stid);
-
-					$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento2.',  (SELECT sysdate FROM dual), '.$monto.', '.$idCuentaSecundaria.', '.$id.', null, null, '.(3-$tipoOperacion).', null, null)');	
-					oci_execute($stid);
-					oci_free_statement($stid);
-
-					$stid = oci_parse($conn, 'SELECT getSaldo('.$id.') s FROM dual');
-					oci_execute($stid);
-					if (($row = oci_fetch_array($stid)) != false) {	
-						$saldo = $row['S'];
-					}	
-					oci_free_statement($stid);
-
-					$resultado = 1;
-					$mensaje = "Movimiento realizado. Correlativo: ".$idMovimiento;
-				}else{
-					$resultado = 2;
-					$error = oci_error($stid);
-					$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-					oci_free_statement($stid);
-				}
-				
-			}else{
-				if($tipoOperacion == 1){
-					$resultado = 4;
-					$mensaje = "Error: Saldo insuficiente de la otra cuenta";
-					$saldo = -1;
-				}else{
-					$resultado = 3;
-					$mensaje = "Error: Saldo insuficiente de la cuenta local";
-					$saldo = -1;
-				}
-		
-			}
-		}else{
-			$resultado = 2;
-			$mensaje = "Error: la otra cuenta no existe";
-			$saldo = -1;
-		}
-	}else{
-		$resultado = 3;
-		$mensaje = "Error: La cuenta no pertenece a este usuario";
-	}
-	oci_close($conn);
-	return array('resultado'=>$resultado, 'mensaje'=>$mensaje, 'saldo'=>$saldo);
-}
-
-function addTransferenciaExterna($id, $idCuentaSecundaria, $tipoOperacion, $monto, $nombreBanco) {
-	include 'confBD.php';
-	$cuenta = 0;
-	$conn = oci_connect($userBD, $passBD, $ipBD);
-	
-	$stid = oci_parse($conn, 'SELECT 1 FROM cuenta where idcuenta = '.$id);
-	oci_execute($stid);
-	if (($row = oci_fetch_array($stid)) != false) {	
-		$existeCuenta = $row['1'];
+		$existeOtraCuenta = $row['1'];
 	}	
 	oci_free_statement($stid);
 
-	if($existeCuenta == 1){
+	if($existeOtraCuenta == 1){
 		$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
 		oci_execute($stid);
 		if (($row = oci_fetch_array($stid)) != false) {	
 			$idMovimiento = $row['NEXTVAL'];
 		}	
 		oci_free_statement($stid);
-
+		$saldoSuficiente = 0;
 		if($tipoOperacion == 1){
+			$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$idCuentaSecundaria.')-'.$monto.' s FROM dual) WHERE s>0');
+			oci_execute($stid);
+			if (($row = oci_fetch_array($stid)) != false) {	
+				$saldoSuficiente = $row['1'];
+			}	
+			oci_free_statement($stid);
+		}else{
+			$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$id.')-'.$monto.' s FROM dual) WHERE s>0');
+			oci_execute($stid);
+			if (($row = oci_fetch_array($stid)) != false) {	
+				$saldoSuficiente = $row['1'];
+			}	
+			oci_free_statement($stid);
+		}	
+
+		if($saldoSuficiente == 1){
+			$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', '.$idCuentaSecundaria.', null, null, '.$tipoOperacion.', null, null)');	
 			
-			$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', '.$idCuentaSecundaria.', null, null, '.$tipoOperacion.', null, (SELECT idBanco FROM banco where UPPER(nombre) = \''.strtoupper($nombreBanco).'\'))');	
-		
 			if(oci_execute($stid)){
 				oci_free_statement($stid);
+				
+				$stid = oci_parse($conn, 'SELECT id_movimiento.nextval FROM dual');
+				oci_execute($stid);
+				if (($row = oci_fetch_array($stid)) != false) {	
+					$idMovimiento2 = $row['NEXTVAL'];
+				}	
+				oci_free_statement($stid);
+
+				$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento2.',  (SELECT sysdate FROM dual), '.$monto.', '.$idCuentaSecundaria.', '.$id.', null, null, '.(3-$tipoOperacion).', null, null)');	
+				oci_execute($stid);
+				oci_free_statement($stid);
+
 				$stid = oci_parse($conn, 'SELECT getSaldo('.$id.') s FROM dual');
 				oci_execute($stid);
 				if (($row = oci_fetch_array($stid)) != false) {	
@@ -1130,101 +1034,24 @@ function addTransferenciaExterna($id, $idCuentaSecundaria, $tipoOperacion, $mont
 				$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
 				oci_free_statement($stid);
 			}
+				
 		}else{
-			$saldoSuficiente = -1;
-			$stid = oci_parse($conn, 'SELECT 1 FROM (SELECT getSaldo('.$id.')-'.$monto.' s FROM dual) WHERE s>0');
-			oci_execute($stid);
-			if (($row = oci_fetch_array($stid)) != false) {	
-				$saldoSuficiente = $row['1'];
-			}	
-			oci_free_statement($stid);	
-		
-			if($saldoSuficiente == 1){
-				$stid = oci_parse($conn, 'INSERT INTO movimiento VALUES('.$idMovimiento.',  (SELECT sysdate FROM dual), '.$monto.', '.$id.', '.$idCuentaSecundaria.', null, null, '.$tipoOperacion.', null, (SELECT idBanco FROM banco where UPPER(nombre) = \''.strtoupper($nombreBanco).'\'))');	
-			
-				if(oci_execute($stid)){
-					oci_free_statement($stid);
-					
-					$ip = -1;
-					$stid = oci_parse($conn, 'SELECT direccionIP FROM banco where UPPER(nombre) = \''.strtoupper($nombreBanco).'\'');
-					oci_execute($stid);
-					if (($row = oci_fetch_array($stid)) != false) {	
-						$ip = $row['DIRECCIONIP'];
-					}	
-					oci_free_statement($stid);
-
-					$client = new nusoap_client( $ip, 'wsdl' );
-					$result = $client->call( 'DepositoCuenta', array( "NoCuenta" => $idCuentaSecundaria, "Saldo" => floatval($monto) ) );
-					if( ! $client->fault && ! $client->getError() ){
-						$resultadoResult = $result[ "DepositoCuenta"."Result" ];
-						$res = $resultadoResult['Contenido'];
-						$resultado = $res['Respuesta'];
-						$mensaje = $res['Mensaje'];
-						$idTrans = $res['Transaccion'];
-				
-						
-						if( strcmp( $resultado, "True" ) == 0 ){
-							oci_free_statement($stid);
-							$stid = oci_parse($conn, 'SELECT getSaldo('.$id.') s FROM dual');
-							oci_execute($stid);
-							if (($row = oci_fetch_array($stid)) != false) {	
-								$saldo = $row['S'];
-							}	
-							oci_free_statement($stid);
-							$resultado = 1;
-							$mensaje = 'Movimiento realizado correctamente. ID transferencia'.$idMovimiento;
-							
-						}else{
-
-							$stid = oci_parse($conn, 'DELETE FROM movimiento WHERE idMovimiento = '.$idMovimiento);
-							oci_execute($stid);
-							if(!oci_execute($stid)){	
-								$resultado = 2;
-								$error = oci_error($stid);
-								$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-								oci_free_statement($stid);
-							}	
-							oci_free_statement($stid);
-
-							$resultado = 3;
-							$mensaje = "Error en transferencia ".$client->getError();
-						}
-					}else{
-						$stid = oci_parse($conn, 'DELETE FROM movimiento WHERE idMovimiento = '.$idMovimiento);
-						oci_execute($stid);
-						if(!oci_execute($stid)){	
-							$resultado = 2;
-							$error = oci_error($stid);
-							$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-							oci_free_statement($stid);
-						}	
-						oci_free_statement($stid);
-						
-						$resultado = 3;
-						$mensaje = "Error al realizar la transferencia: ".$client->getError();
-						$saldo = -1;		
-					}
-
-					
-				}else{
-					$resultado = 2;
-					$error = oci_error($stid);
-					$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-					oci_free_statement($stid);
-				}
-				
+			if($tipoOperacion == 1){
+				$resultado = 4;
+				$mensaje = "Error: Saldo insuficiente de la otra cuenta";
+				$saldo = -1;
 			}else{
 				$resultado = 3;
 				$mensaje = "Error: Saldo insuficiente de la cuenta local";
-				$saldo = -1;		
+				$saldo = -1;
 			}
+		
 		}
 	}else{
 		$resultado = 2;
-		$mensaje = "Error: la cuenta ".$id." no existe";
+		$mensaje = "Error: la otra cuenta no existe";
 		$saldo = -1;
 	}
-
 	oci_close($conn);
 	return array('resultado'=>$resultado, 'mensaje'=>$mensaje, 'saldo'=>$saldo);
 }
@@ -1232,7 +1059,7 @@ function addTransferenciaExterna($id, $idCuentaSecundaria, $tipoOperacion, $mont
 function getIdsMovimiento($id, $usuario) {
 	include 'confBD.php';
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT idMovimiento FROM movimiento where idCuenta = '.$id.' AND idCuenta = (SELECT idCuenta FROM cuenta where idCuenta = '.$id.' AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\')) ORDER BY idMovimiento DESC');
+	$stid = oci_parse($conn, 'SELECT idMovimiento FROM movimiento where idCuenta = '.$id);
 	oci_execute($stid);
 
 	$ids = array();
@@ -1282,7 +1109,7 @@ function getMovimiento($idCuenta, $idMovimiento) {
 function getIdsPrestamoCuenta($id, $usuario) {
 	include 'confBD.php';
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT idPrestamo FROM prestamo where idCuenta = '.$id.' AND idCuenta = (SELECT idCuenta FROM cuenta where idCuenta = '.$id.' AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\'))');
+	$stid = oci_parse($conn, 'SELECT idPrestamo FROM prestamo where idCuenta = '.$id);
 	oci_execute($stid);
 
 	$ids = array();
@@ -1333,39 +1160,27 @@ function getPrestamo($idPrestamo) {
 function addPrestamo($id, $usuario, $montoCuota, $totalPrestamo, $totalRecibir, $idTipoPrestamo) {
 	include 'confBD.php';
 
-	$cuenta = 0;
 	$conn = oci_connect($userBD, $passBD, $ipBD);
-	$stid = oci_parse($conn, 'SELECT idcuenta FROM cuenta WHERE idcuenta ='.$id.' AND idusuario = (SELECT idusuario from usuario where usuario=\''.$usuario.'\')');
+
+	$stid = oci_parse($conn, 'SELECT id_prestamo.nextval FROM dual');
 	oci_execute($stid);
 	if (($row = oci_fetch_array($stid)) != false) {	
-		$cuenta = $row['IDCUENTA'];
-	}	
-	oci_free_statement($stid);
-	if($cuenta != 0){
-
-		$stid = oci_parse($conn, 'SELECT id_prestamo.nextval FROM dual');
-		oci_execute($stid);
-		if (($row = oci_fetch_array($stid)) != false) {	
-			$idPrestamo = $row['NEXTVAL'];
-		}
-	
-		oci_free_statement($stid);
-	
-		$stid = oci_parse($conn, 'INSERT INTO prestamo VALUES ('.$idPrestamo.', '.$montoCuota.', '.$totalPrestamo.', '.$totalRecibir.', (SELECT sysdate FROM dual), '.$id.', 1, '.$idTipoPrestamo.', 0, null)');
-
-		if(oci_execute($stid)){
-			$resultado = 1;
-			$mensaje = "Exito: prestamo creado. Correlativo:".$idPrestamo;
-		}else{
-			$resultado = 2;
-			$error = oci_error($stid);
-			$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
-		}
-		oci_free_statement($stid);
-	}else{
-		$resultado = 3;
-		$mensaje = "Error: La cuenta no pertenece a este usuario";
+		$idPrestamo = $row['NEXTVAL'];
 	}
+	
+	oci_free_statement($stid);
+	
+	$stid = oci_parse($conn, 'INSERT INTO prestamo VALUES ('.$idPrestamo.', '.$montoCuota.', '.$totalPrestamo.', '.$totalRecibir.', (SELECT sysdate FROM dual), '.$id.', 1, '.$idTipoPrestamo.', 0, null)');
+
+	if(oci_execute($stid)){
+		$resultado = 1;
+		$mensaje = "Exito: prestamo creado. Correlativo:".$idPrestamo;
+	}else{
+		$resultado = 2;
+		$error = oci_error($stid);
+		$mensaje = "Error: ". htmlentities($error['message'])."  ". htmlentities($error['sqltext']);
+	}
+	oci_free_statement($stid);
 	oci_close($conn);
 	return array('resultado'=>$resultado, 'mensaje'=>$mensaje);
 }
