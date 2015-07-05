@@ -73,11 +73,12 @@ if( isset( $_SESSION['admon'] ) ){
 				<li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Préstamos <span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="prestamo_solicitar_monto.php">Solicitar</a></li>
+                    <li><a href="redirect_prestamo_solicitar.php">Solicitar</a></li>
                     <li><a href="prestamo_pagar.php">Realizar pago</a></li>
-					<li><a href="prestamos_visualizar.php">Visualizar</a></li>
+					<li><a href="redirect_prestamos_visualizar.php">Visualizar</a></li>
                   </ul>
                 </li>
+				<li><a href="perfil.php">Mi Perfil</a></li>
 				<li><a href="db_logout.php">Cerrar sesión</a></li>
               </ul>
             </div>
@@ -121,13 +122,13 @@ if( $monto < 5000 ){
 		$cuota = round( $total / $prestamo->cantidadCuotas, 2 );
 		//mostrar informacion
 		echo '<input type="hidden" name="idTipoPrestamo" value="'.$prestamo->id.'">';
-		echo '<p>Solicitado: Q' . $monto . '</p>';
+		echo '<p>Solicitado: Q' . number_format( $monto, 2, '.', ',' ) . '</p>';
 		echo '<input type="hidden" name="totalPrestamo" value="'.$monto.'">';
-		echo '<p>Rango: Q' . $prestamo->min . ' a Q' . $prestamo->max . '</p>';
-		echo '<p>Total a devolver: Q' . $total . '</p>';
+		echo '<p>Rango: Q' . number_format( $prestamo->min , 0, '.', ',' ) . ' a Q' . number_format( $prestamo->max , 0, '.', ',' ) . '</p>';
+		echo '<p>Total a devolver: Q' . number_format( $total, 2, '.', ',' ) . '</p>';
 		echo '<input type="hidden" name="totalRecibir" value="'.$total.'">';
-		echo '<p>Tasa interés: ' . $prestamo->tasaInteres . '%</p>';
-		echo '<p>Cuotas: ' . $prestamo->cantidadCuotas . ' cuotas de Q' . $cuota . ' cada una</p>';
+		echo '<p>Tasa interés: ' . number_format( $prestamo->tasaInteres, 2 ) . '%</p>';
+		echo '<p>Cuotas: ' . $prestamo->cantidadCuotas . ' cuotas de Q' . number_format( $cuota , 2, '.', ',' ) . ' cada una</p>';
 		echo '<input type="hidden" name="montoCuota" value="'.$cuota.'">';
 	}else{
 		//mensaje y redirigir

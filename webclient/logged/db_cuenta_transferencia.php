@@ -4,6 +4,7 @@ require_once('../classes/Admon.php');
 $numCuenta = $_POST['numCuenta'];
 $monto = $_POST['monto'];
 $numCuentaSec = $_POST['numCuentaSec'];
+$banco = $_POST['banco'];
 
 if( $monto < 50 ){
 	//mensaje y redirigir
@@ -15,9 +16,16 @@ if( $monto < 50 ){
 	//crear transferencia
 	session_start();
 	$admon = unserialize( $_SESSION['admon'] );
-	$admon->usuarioActual->actualizarCuentas();
-	$cuenta = $admon->usuarioActual->getCuenta( $numCuenta );
-	$resultado = $cuenta->transferencia( $admon->usuarioActual->usuario, $numCuentaSec, $monto, 2 );
+	
+	if( strcmp( $_SESSION['banco'], "PHP" ) == 0 ){
+		$admon->usuarioActual->actualizarCuentas();
+		$cuenta = $admon->usuarioActual->getCuenta( $numCuenta );
+		$resultado = $cuenta->transferencia( $admon->usuarioActual->usuario, $numCuentaSec, $monto, 2, $banco );
+	}elseif( strcmp( $_SESSION['banco'], "ASP" ) == 0 ){
+		$resultado = $admon->usuarioActual->transferencia_ASP( $numCuenta, $numCuentaSec, $monto, $banco );
+	}else{
+	}
+	
 	if( $resultado[0] == 1 ){
 		//$admon->usuarioActual->actualizarCuentas();
 		//mensaje y redirigir

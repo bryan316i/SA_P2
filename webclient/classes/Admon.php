@@ -6,18 +6,22 @@ class Admon implements Serializable{
 	public $usuarioActual;
 	public $idCuentaActual;
 	public $client;
-	public static $connectionString = "http://25.126.241.8/WebServices/server.php";
-	//public static $connectionString = "http://192.168.1.55/WebServices/server.php";
+	
 	public $listaDocIdentificacion, $listaTipoPrestamo, $listaTipoSeguro, $listaBanco;
 	//ESPECIAL
 	public $listaPrestamoSinAutorizar;
+	//CONEXION
+	public static $connectionString = "http://25.126.241.8/WebServices/server.php";
+	//public static $connectionString = "http://192.168.1.21/WebServices/server.php";
+	//public static $connectionStringA = "http://192.168.1.15:8080/prestamos.asmx?wsdl";
+	public static $connectionStringA = "http://25.158.45.37:8080/prestamos.asmx?wsdl";
+	public static $connectionStringJ = "http://192.168.1.31:8080/SA_Proyecto_Servidor/nuevoUsuario?wsdl";
 	
 	//metodos
+	//function __construct( $banco ){
 	function __construct(){
 		$this->idCuentaActual = 0;
-		//$client = new nusoap_client( "http://localhost/nusoap/productlist.php" );
-		//$connectionString = "http://localhost/SAP2/WebServices/server.php";
-		//$connectionString = "http://25.126.241.8/WebServices/server.php";
+		//$_SESSION['banco'] = $banco;
 	}
 	public function actualizarOpciones(){
 		actualizarDocsIdentif();
@@ -192,70 +196,161 @@ class Usuario implements Serializable{
 	public $cambiarPass, $fechaRegistro;
 	public $idDocIdentificacion, $numDocIdentificacion;
 	public $listaCuenta;
+	//ASP
+	public $strListaCuenta, $strListaPrestamo;
+	public $listaPrestamo;
 	
 	//metodos
 	function __construct( $usuario ){
 		$this->usuario = $usuario;
 	}
 	public function crear(){
-		$client = new nusoap_client( Admon::$connectionString );
-		//guarda usuario
-		$result = $client->call( "addUser", array( "nombre" => $this->nombre, "apellido" => $this->apellido , "telefono" => $this->telefono , "direccion" => $this->direccion , "idDocIdentificacion" => $this->idDocIdentificacion , "numDocIdentificacion" => $this->numDocIdentificacion , "email" => $this->email ) );
-		if( ! $client->fault && ! $client->getError() ){
-			$resultado = $result['resultado'];
-			$mensaje = $result['mensaje'];
-			$usr = $result['usuario'];
-			$pass = $result['password'];
-			//ve resultado
-			return array( $resultado, $mensaje, $usr, $pass );
+		if( strcmp( $_SESSION['banco'], "PHP" ) == 0 ){
+			$client = new nusoap_client( Admon::$connectionString );
+			//guarda usuario
+			$result = $client->call( "addUser", array( "nombre" => $this->nombre, "apellido" => $this->apellido , "telefono" => $this->telefono , "direccion" => $this->direccion , "idDocIdentificacion" => $this->idDocIdentificacion , "numDocIdentificacion" => $this->numDocIdentificacion , "email" => $this->email ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultado = $result['resultado'];
+				$mensaje = $result['mensaje'];
+				$usr = $result['usuario'];
+				$pass = $result['password'];
+				//ve resultado
+				return array( $resultado, $mensaje, $usr, $pass );
+			}else{
+				return array( 3, "ERRROR" ); //error
+			}
+		}elseif( strcmp( $_SESSION['banco'], "ASP" ) == 0 ){
+			$client = new nusoap_client( Admon::$connectionStringA, 'wsdl' );
+			$result = $client->call( "Registro", array( "Nombre"=>$this->nombre, "Apellido"=>$this->apellido, "Dpi"=>intval( $this->numDocIdentificacion ), "Direccion"=>$this->direccion, "Telefono"=>intval( $this->telefono ), "Correo"=>$this->email, "Sexo"=>"M" ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultadoResult = $result['RegistroResult'];
+				$res = $resultadoResult['Contenido'];
+				$resultado = $res['Respuesta'];
+				$mensaje = $res['Mensaje'];
+				//ve resultado
+				if( strcmp( $resultado, "True" ) == 0 ){
+					return array( 1, $mensaje );
+				}else{
+					return array( 2, $mensaje );
+				}
+			}else{
+				return array( 3, "ERRROR" ); //error
+			}
 		}else{
-			return array( 3, "ERRROR" ); //error
+			$client = new nusoap_client( Admon::$connectionStringJ, 'wsdl' );
+			$result = $client->call( "nuevoU", array( "nombre"=>$this->nombre, "direccion"=>$this->direccion, "telefono"=>$this->telefono, "dpi"=>$this->numDocIdentificacion, "email"=>$this->email, "contrasenia"=>"pass" ) );
+			if( ! $client->fault && ! $client->getError() ){
+				//$resultado = explode( ",", $result );
+				//ve resultado
+				return array( 1, $result );
+			}else{
+				return array( 3, "ERRROR" ); //error
+			}
 		}
 	}
 	public function login(){
-		$client = new nusoap_client( Admon::$connectionString );
-		//prueba login
-		$result = $client->call( "login", array( "usuario" => $this->usuario, "password" => $this->password ) );
-		if( ! $client->fault && ! $client->getError() ){
-			$resultado = $result['resultado'];
-			$mensaje = $result['mensaje'];
-			//toma informacion
-			$this->nombre = "USUARIO";
-			//informacion del usuario
-			$this->refresh();
-			//ve resultado
-			return array( $resultado, $mensaje );
+		if( strcmp( $_SESSION['banco'], "PHP" ) == 0 ){
+			$client = new nusoap_client( Admon::$connectionString );
+			//prueba login
+			$result = $client->call( "login", array( "usuario" => $this->usuario, "password" => $this->password ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultado = $result['resultado'];
+				$mensaje = $result['mensaje'];
+				//toma informacion
+				$this->nombre = "USUARIO";
+				//informacion del usuario
+				$this->refresh();
+				//ve resultado
+				return array( $resultado, $mensaje );
+			}else{
+				return array( 5, "ERRROR" ); //error
+			}
+		}elseif( strcmp( $_SESSION['banco'], "ASP" ) == 0 ){
+			$client = new nusoap_client( Admon::$connectionStringA, 'wsdl' );
+			$result = $client->call( "IniciarSesion", array( "usuario" => $this->usuario, "contrasenia" => $this->password ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultadoResult = $result['IniciarSesionResult'];
+				$res = $resultadoResult['Contenido'];
+				$resultado = $res['Respuesta'];
+				$mensaje = $res['Mensaje'];
+				$this->id = $res['Id_cliente'];
+				$this->refresh();
+				//ve resultado
+				//ve resultado
+				if( strcmp( $resultado, "True" ) == 0 ){
+					return array( 1, $mensaje );
+				}else{
+					return array( 2, $mensaje );
+				}
+			}else{
+				return array( 3, "ERRROR" ); //error
+			}
 		}else{
-			return array( 5, "ERRROR" ); //error
+			$client = new nusoap_client( Admon::$connectionStringJ, 'wsdl' );
+			$result = $client->call( "login", array( "correo"=>$this->usuario, "contrasena"=>$this->password ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultado = $result;
+				$this->refresh();
+				//ve resultado
+				if( $resultado ){
+					return array( 1, "Login exitoso" );
+				}else{
+					return array( 2, "Login fallido" );
+				}
+			}else{
+				return array( 3, "ERRROR" ); //error
+			}
 		}
 	}
 	public function logout(){
-		$client = new nusoap_client( Admon::$connectionString );
-		//prueba login
-		$result = $client->call( "logout", array( "usuario" => $this->usuario ) );
-		if( ! $client->fault && ! $client->getError() ){
-			$resultado = $result['resultado'];
-			$mensaje = $result['mensaje'];
-			//ve resultado
-			return array( $resultado, $mensaje );
+		if( strcmp( $_SESSION['banco'], "PHP" ) == 0 ){
+			$client = new nusoap_client( Admon::$connectionString );
+			//prueba login
+			$result = $client->call( "logout", array( "usuario" => $this->usuario ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultado = $result['resultado'];
+				$mensaje = $result['mensaje'];
+				//ve resultado
+				return array( $resultado, $mensaje );
+			}else{
+				return array( 5, "ERRROR" ); //error
+			}
+		}elseif( strcmp( $_SESSION['banco'], "ASP" ) == 0 ){
+			return array( 1, "Sesión cerrada exitosamente" );
 		}else{
-			return array( 5, "ERRROR" ); //error
+			return array( 1, "Sesión cerrada exitosamente" );
 		}
 	}
 	public function refresh(){
-		$client = new nusoap_client( Admon::$connectionString );
-		$info = $client->call( "getInfoUsuario", array( "usuario" => $this->usuario ) );
-		if( ! $client->fault && ! $client->getError() ){
-			$this->id = $info['id'];
-			$this->nombre = $info['nombre'];
-			$this->apellido = $info['apellido'];
-			$this->telefono = $info['telefono'];
-			$this->direccion = $info['direccion'];
-			$this->cambiarPass = $info['cambiarPass'];
-			$this->fechaRegistro = $info['fechaRegistro'];
-			$this->idDocIdentificacion = $info['idDocIdentificacion'];
-			$this->numDocIdentificacion = $info['numDocIdentificacion'];
-			$this->email = $info['email'];
+		if( strcmp( $_SESSION['banco'], "PHP" ) == 0 ){
+			$client = new nusoap_client( Admon::$connectionString );
+			$info = $client->call( "getInfoUsuario", array( "usuario" => $this->usuario ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$this->id = $info['id'];
+				$this->nombre = $info['nombre'];
+				$this->apellido = $info['apellido'];
+				$this->telefono = $info['telefono'];
+				$this->direccion = $info['direccion'];
+				$this->cambiarPass = $info['cambiarPass'];
+				$this->fechaRegistro = $info['fechaRegistro'];
+				$this->idDocIdentificacion = $info['idDocIdentificacion'];
+				$this->numDocIdentificacion = $info['numDocIdentificacion'];
+				$this->email = $info['email'];
+			}
+		}elseif( strcmp( $_SESSION['banco'], "ASP" ) == 0 ){
+			$client = new nusoap_client( Admon::$connectionStringA, 'wsdl' );
+			$result = $client->call( "DetalleCuenta", array( "Id" => $this->id ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultadoResult = $result['DetalleCuentaResult'];
+				$res = $resultadoResult['Contenido'];
+				$this->nombre = $res['Nombre'];
+				$this->apellido = $res['Apellido'];
+				$this->numDocIdentificacion = $res['Dpi'];
+				$this->direccion = $res['Direccion'];
+				$this->telefono = $res['Telefono'];
+				$this->email = $res['Correo'];
+			}
+		}else{
 		}
 	}
 	public function cambiarPassword(){
@@ -270,35 +365,80 @@ class Usuario implements Serializable{
 		return $this->nombre . ' ' . $this->apellido;
 	}
 	public function actualizarCuentas(){
-		unset( $this->listaCuenta );
-		$client = new nusoap_client( Admon::$connectionString );
-		//cuentas
-		$result = $client->call( "getIdsCuenta", array( "id" => $this->id, "usuario" => $this->usuario ) );
-		if( ! $client->fault && ! $client->getError() ){
-			$cantidad = $result['cantidad'];
-			$ids = $result['array'];
-			for( $i=0; $i<$cantidad; $i++ ){
-				$id = $ids[$i];
-				//informacion de cada cuenta
-				$info = $client->call( "getCuenta", array( "id" => $id, "usuario" => $this->usuario ) );
-				if( ! $client->fault && ! $client->getError() ){
-					$cuenta = new Cuenta( $id, $info['fechaCreacion'], $info['saldo'] );
-					$this->listaCuenta[] = $cuenta;
+		if( strcmp( $_SESSION['banco'], "PHP" ) == 0 ){
+			unset( $this->listaCuenta );
+			$client = new nusoap_client( Admon::$connectionString );
+			//cuentas
+			$result = $client->call( "getIdsCuenta", array( "id" => $this->id, "usuario" => $this->usuario ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$cantidad = $result['cantidad'];
+				$ids = $result['array'];
+				for( $i=0; $i<$cantidad; $i++ ){
+					$id = $ids[$i];
+					//informacion de cada cuenta
+					$info = $client->call( "getCuenta", array( "id" => $id, "usuario" => $this->usuario ) );
+					if( ! $client->fault && ! $client->getError() ){
+						$cuenta = new Cuenta( $id, $info['fechaCreacion'], $info['saldo'] );
+						$this->listaCuenta[] = $cuenta;
+					}
+				}
+				return $cantidad;
+			}
+		}elseif( strcmp( $_SESSION['banco'], "ASP" ) == 0 ){
+			unset( $this->listaCuenta );
+			$client = new nusoap_client( Admon::$connectionStringA, 'wsdl' );
+			if( isset( $this->strListaCuenta ) ){
+				foreach( $this->strListaCuenta as $idCuenta ){
+					$result = $client->call( "SaldoCuenta", array( "NoCuenta" => $idCuenta, "Id" => $this->id ) );
+					if( ! $client->fault && ! $client->getError() ){
+						$resultadoResult = $result['SaldoCuentaResult'];
+						$res = $resultadoResult['Contenido'];
+						$resultado = $res['Respuesta'];
+						$mensaje = $res['Mensaje'];
+						$cuenta = new Cuenta( $idCuenta, date("d/m/Y"), $res['Saldo'] );
+						$this->listaCuenta[] = $cuenta;
+					}
 				}
 			}
-			return $cantidad;
+		}else{
+			//PENDIENTE
 		}
 	}
 	public function crearCuenta( $montoInicial ){
-		$client = new nusoap_client( Admon::$connectionString );
-		//crear cuenta
-		$result = $client->call( "addCuenta", array( "usuario" => $this->usuario ) );
-		if( ! $client->fault && ! $client->getError() ){
-			$resultado = $result['resultado'];
-			$id = $result['id'];
-			$fechaCreacion = $result['fechaCreacion'];
-			return array( $resultado, $id, $fechaCreacion );
+		if( strcmp( $_SESSION['banco'], "PHP" ) == 0 ){
+			$client = new nusoap_client( Admon::$connectionString );
+			//crear cuenta
+			$result = $client->call( "addCuenta", array( "usuario" => $this->usuario ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultado = $result['resultado'];
+				$id = $result['id'];
+				$fechaCreacion = $result['fechaCreacion'];
+				return array( $resultado, $id, $fechaCreacion );
+			}
+		}elseif( strcmp( $_SESSION['banco'], "ASP" ) == 0 ){
+			$client = new nusoap_client( Admon::$connectionStringA, 'wsdl' );
+			$result = $client->call( "Abrir", array( "Id" => $this->id, "Saldo" => floatval($montoInicial), "Tipo" => 0 ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultadoResult = $result['AbrirResult'];
+				$res = $resultadoResult['Contenido'];
+				$resultado = $res['Respuesta'];
+				$mensaje = $res['Mensaje'];
+				$id = $res['NoCuenta'];
+				$this->strListaCuenta[] = $id;
+				//ve resultado
+				//ve resultado
+				if( strcmp( $resultado, "True" ) == 0 ){
+					return array( 1, $id, "" );
+				}else{
+					return array( 2, $id, "" );
+				}
+			}else{
+				return array( 3, "ERRROR" ); //error
+			}
+		}else{
+			//PENDIENTE
 		}
+		
 	}
 	public function getCuenta( $numCuenta ){
 		foreach ( $this->listaCuenta as $cuenta ){
@@ -307,6 +447,121 @@ class Usuario implements Serializable{
 			}
 		}
 		return null;
+	}
+	//ASP
+	public function solicitarPrestamo_ASP( $monto, $tasa, $cantidadCuotas ){
+		$client = new nusoap_client( Admon::$connectionStringA, 'wsdl' );
+		$result = $client->call( "crear_prestamo", array( "monto" => $monto, "interes" => $tasa, "num_cuotas" => $cantidadCuotas, "cliente" => $this->id ) );
+		if( ! $client->fault && ! $client->getError() ){
+			$resultadoResult = $result[ "crear_prestamoResult" ];
+			$res = $resultadoResult['Contenido'];
+			$idPrestamo = $res['prestamo'];
+			$this->strListaPrestamo[] = $idPrestamo;
+			$cuota = $res['cuota'];
+			$mensaje = "Tu prestamo fue enviado. La cuota es de Q".number_format( $cuota, 2, '.', ',' );
+			//ve resultado
+			return array( 1, $mensaje, 0 );
+		}else{
+			return array( 3, "ERRROR" ); //error
+		}
+	}
+	public function actualizarPrestamos_ASP(){
+		unset( $this->listaPrestamo );
+		$client = new nusoap_client( Admon::$connectionStringA, 'wsdl' );
+		if( isset( $this->strListaPrestamo ) ){
+			foreach( $this->strListaPrestamo as $idPrestamo ){
+				$result = $client->call( "consultar_prestamo", array( "prestamo" => $idPrestamo ) );
+				if( ! $client->fault && ! $client->getError() ){
+					$resultadoResult = $result['consultar_prestamoResult'];
+					$res = $resultadoResult['Contenido'];
+					$resultado = $res['respuesta'];
+					$cuotasRestantes = $res['pendientes'];
+					$tasaInteres = $res['interes'];
+					$saldo = $res['saldo'];
+					$cuota = $res['cuota'];
+					$totalPrestamo = $res['total'];
+					
+					$prestamo = new Prestamo( $cuota, $totalPrestamo, $totalPrestamo*(100+$tasaInteres)/100, 0 );
+					$prestamo->id = $idPrestamo;
+					$prestamo->fechaRegistro = date("d/m/Y");
+					$prestamo->autorizado = "-";
+					$prestamo->fechaAutorizado = "-";
+					$prestamo->cantidadCuotasRestantes = $cuotasRestantes;
+					$prestamo->tasaInteres = $tasaInteres;
+					$prestamo->saldoRestante = $saldo;
+					$this->listaPrestamo[] = $prestamo;
+				}
+			}
+		}
+	}
+	public function transferencia_ASP( $idCuenta, $idCuentaSecundaria, $monto, $banco ){
+		if( strcmp( $banco, "ASP" ) == 0 ){
+		//INTERNA
+			/*$client = new nusoap_client( Admon::$connectionStringA );
+			//crear movimiento
+			$result = $client->call( "Transf", array( "id" => $this->id, "usuario" => $usuario, "idCuentaSecundaria" => $cuentaSecundaria, "tipoOperacion" => $operacion, "monto" => $monto ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultado = $result['resultado'];
+				$mensaje = $result['mensaje'];
+				$saldo = $result['saldo'];
+				return array( $resultado, $mensaje, $saldo );
+			}*/
+			
+			$client = new nusoap_client( Admon::$connectionStringA, 'wsdl' );
+			$result = $client->call( "TransferenciaInterna", array( "NoCuentaOrigen" => intval( $idCuenta ), "NoCuentaDestino" => intval( $idCuentaSecundaria ), "Monto" => floatval( $monto ) ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultadoResult = $result[ "TransferenciaInternaResult" ];
+				$res = $resultadoResult['Contenido'];
+				$resultado = $res['Respuesta'];
+				$mensaje = $res['Mensaje'];
+				$idTrans = $res['Transaccion'];
+				
+				//ve resultado
+				if( strcmp( $resultado, "True" ) == 0 ){
+					return array( 1, $mensaje, 0 );
+				}else{
+					return array( 2, $mensaje, 0 );
+				}
+			}else{
+				return array( 3, "ERRROR" ); //error
+			}
+			
+			/*$cuentaRetiro = new Cuenta( $idCuenta, "", 0 );
+			$resultR = $cuentaRetiro->retiro( "", $monto );
+			if( $resultR[0] == 1 ){
+				$cuentaDeposito = new Cuenta( $idCuentaSecundaria, "", 0 );
+				$resultD = $cuentaDeposito->depositar( "", $monto );
+				if( $resultD[0] == 1 ){
+					return array( 1, "Transferencia exitosa" );
+				}else{
+					$cuentaRetiro->depositar( "", $monto );
+					return array( 1, "Error en deposito" );
+				}
+			}else{
+				return array( 3, "Error en retiro" );
+			}*/
+		}elseif( strcmp( $banco, "PHP" ) == 0 ){
+		//EXTERNA
+			$client = new nusoap_client( Admon::$connectionStringA, 'wsdl' );
+			$result = $client->call( "TransferenciaExterna", array( "NoCuentaOrigen" => intval( $idCuenta ), "NoCuentaDestino" => intval( $idCuentaSecundaria ), "Monto" => floatval( $monto ), "Banco" => 2 ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultadoResult = $result[ "TransferenciaExternaResult" ];
+				$res = $resultadoResult['Contenido'];
+				$resultado = $res['Respuesta'];
+				$mensaje = $res['Mensaje'];
+				$idTrans = $res['Transaccion'];
+				
+				//ve resultado
+				if( strcmp( $resultado, "True" ) == 0 ){
+					return array( 1, $mensaje, 0 );
+				}else{
+					return array( 2, $mensaje, 0 );
+				}
+			}else{
+				return array( 3, "ERRROR" ); //error
+			}
+		}else{
+		}
 	}
 	//default
 	public function serialize(){
@@ -337,25 +592,73 @@ class Cuenta{
 		return $this->movimiento( $usuario, $monto, 2 );
 	}
 	public function movimiento( $usuario, $monto, $operacion ){
-		$client = new nusoap_client( Admon::$connectionString );
-		//crear movimiento
-		$result = $client->call( "addMovimientoLocal", array( "id" => $this->id, "usuario" => $usuario, "tipoOperacion" => $operacion, "monto" => $monto ) );
-		if( ! $client->fault && ! $client->getError() ){
-			$resultado = $result['resultado'];
-			$mensaje = $result['mensaje'];
-			$saldo = $result['saldo'];
-			return array( $resultado, $mensaje, $saldo );
+		if( strcmp( $_SESSION['banco'], "PHP" ) == 0 ){
+			$client = new nusoap_client( Admon::$connectionString );
+			//crear movimiento
+			$result = $client->call( "addMovimientoLocal", array( "id" => $this->id, "usuario" => $usuario, "tipoOperacion" => $operacion, "monto" => $monto ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultado = $result['resultado'];
+				$mensaje = $result['mensaje'];
+				$saldo = $result['saldo'];
+				return array( $resultado, $mensaje, $saldo );
+			}
+		}elseif( strcmp( $_SESSION['banco'], "ASP" ) == 0 ){
+			if( $operacion == 1 ){
+				$op = "DepositoCuenta";
+			}else{
+				$op = "RetiroCuenta";
+			}
+			$client = new nusoap_client( Admon::$connectionStringA, 'wsdl' );
+			$result = $client->call( $op, array( "NoCuenta" => $this->id, "Saldo" => floatval($monto) ) );
+			if( ! $client->fault && ! $client->getError() ){
+				$resultadoResult = $result[ $op."Result" ];
+				$res = $resultadoResult['Contenido'];
+				$resultado = $res['Respuesta'];
+				$mensaje = $res['Mensaje'];
+				$idTrans = $res['Transaccion'];
+				
+				//ve resultado
+				if( strcmp( $resultado, "True" ) == 0 ){
+					return array( 1, $mensaje, 0 );
+				}else{
+					return array( 2, $mensaje, 0 );
+				}
+			}else{
+				return array( 3, "ERRROR" ); //error
+			}
+		}else{
 		}
+		
 	}
-	public function transferencia( $usuario, $cuentaSecundaria, $monto, $operacion ){
-		$client = new nusoap_client( Admon::$connectionString );
-		//crear movimiento
-		$result = $client->call( "addTransferenciaLocal", array( "id" => $this->id, "usuario" => $usuario, "idCuentaSecundaria" => $cuentaSecundaria, "tipoOperacion" => $operacion, "monto" => $monto ) );
-		if( ! $client->fault && ! $client->getError() ){
-			$resultado = $result['resultado'];
-			$mensaje = $result['mensaje'];
-			$saldo = $result['saldo'];
-			return array( $resultado, $mensaje, $saldo );
+	public function transferencia( $usuario, $cuentaSecundaria, $monto, $operacion, $banco ){
+		if( strcmp( $_SESSION['banco'], "PHP" ) == 0 ){
+			if( strcmp( $banco, "PHP" ) == 0 ){
+			//INTERNA
+				$client = new nusoap_client( Admon::$connectionString );
+				//crear movimiento
+				$result = $client->call( "addTransferenciaLocal", array( "id" => $this->id, "usuario" => $usuario, "idCuentaSecundaria" => $cuentaSecundaria, "tipoOperacion" => $operacion, "monto" => $monto ) );
+				if( ! $client->fault && ! $client->getError() ){
+					$resultado = $result['resultado'];
+					$mensaje = $result['mensaje'];
+					$saldo = $result['saldo'];
+					return array( $resultado, $mensaje, $saldo );
+				}
+			}elseif( strcmp( $banco, "ASP" ) == 0 ){
+			//EXTERNA con ASP
+				$client = new nusoap_client( Admon::$connectionString );
+				//crear movimiento
+				$result = $client->call( "addTransferenciaExterna", array( "idCuenta" => $this->id, "idCuentaExterna" => $cuentaSecundaria, "tipoOperacion" => $operacion, "monto" => $monto, "nombreBanco" => $banco ) );
+				if( ! $client->fault && ! $client->getError() ){
+					$resultado = $result['resultado'];
+					$mensaje = $result['mensaje'];
+					$saldo = $result['saldo'];
+					return array( $resultado, $mensaje, $saldo );
+				}
+			}else{
+			}
+		}elseif( strcmp( $_SESSION['banco'], "ASP" ) == 0 ){
+			//NADA AQUI
+		}else{
 		}
 	}
 	public function actualizarHistorial( $usuario ){
@@ -428,6 +731,8 @@ class Cuenta{
 class Prestamo{
 	//atributos
 	public $id, $montoCuota, $totalPrestamo, $totalRecibir, $fechaRegistro, $autorizado, $fechaAutorizado, $idTipoPrestamo;
+	//ASP
+	public $cantidadCuotasRestantes, $tasaInteres, $saldoRestante;
 	//metodos
 	function __construct( $montoCuota, $totalPrestamo, $totalRecibir, $idTipoPrestamo ){
 		$this->montoCuota = $montoCuota;

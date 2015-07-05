@@ -3,8 +3,12 @@
 	
 	$usuario = $_POST['usuario'];
 	$pass = $_POST['password'];
+	$banco = $_POST['banco'];
+	session_start();
+	$_SESSION['banco'] = $banco;
 	
 	$admon = new Admon();
+	//$admon = new Admon( $banco );
 	$resultado = $admon->login( $usuario, $pass );
 	if( $resultado[0] == 1 ){
 		$cambiarPass = $admon->usuarioActual->cambiarPass;
@@ -20,7 +24,7 @@
 		//mensaje y redirigir
 		echo '<script language="javascript">';
 		echo 'alert( "'. $resultado[1] .'" );';
-		echo 'window.location = "index.html"';
+		echo 'window.location = "index.php"';
 		echo '</script>';
 	}
 ?>

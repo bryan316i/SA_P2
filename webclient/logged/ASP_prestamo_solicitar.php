@@ -23,7 +23,14 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-
+<?php
+require_once( '../classes/Admon.php' );
+session_start();
+if( isset( $_SESSION['admon'] ) ){
+}else{
+	header( 'Location: ..');
+}
+?>
   <body>
 
       <div class="navbar-wrapper">
@@ -81,41 +88,26 @@
       </div>
     </div>
 	
-    <div class="container">
+	<div class="container">
 	
 	  <div class="row">
 		<div class="col-lg-5 col-centered">
-			<h4>Usuario: usuario</h4>
+			<h4>Usuario: 
+<?php
+	echo unserialize($_SESSION['admon'])->usuarioActual->getNombreCompleto();
+?>
+			</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
-	  
-	  <div class="row">
-        <div class="col-lg-5 col-centered">
-			<h2 class="sub-header">Seguros contratados</h2>
-			  <div class="table-responsive">
-				<table class="table table-striped">
-				  <thead>
-					<tr>
-					  <th>#</th>
-					  <th>Cuenta</th>
-					  <th>Seguro</th>
-					  <th>Fecha contrato</th>
-					  <th>Monto</th>
-					</tr>
-				  </thead>
-				  <tbody>
-					<tr>
-					  <td>1</td>
-					  <td>5522215</td>
-					  <td>Automóvil</td>
-					  <td>22/06/2015</td>
-					  <td>Q 500.00</td>
-					</tr>
-				  </tbody>
-				</table>
-			  </div>
-		  </div><!-- /.col-lg-4 -->
-      </div><!-- /.row -->
+		
+	  <form action="db_ASP_prestamo_solicitar.php" method="post" >
+        <h2 class="form-heading">Solicita un préstamo</h2>
+		<label for="inputMonto" class="sr-only">Monto</label>
+        <input type="number" step="0.01" id="inputMonto" name="monto" class="form-control" placeholder="Monto a solicitar" required autofocus>
+		<input type="number" step="0.01" id="inputTasa" name="tasa" class="form-control" placeholder="Tasa de interés mensual" required>
+		<input type="number" step="0.01" id="inputCantidadCuotas" name="cantidadCuotas" class="form-control" placeholder="Cantidad de cuotas" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Solicitar</button>
+      </form>
 
 	  <footer>
         <p>&copy; 2015 Banco, BitBat &middot; <a href="#">Privacidad</a> &middot; <a href="#">Términos</a></p>

@@ -25,7 +25,14 @@
   </head>
 
   <body>
-
+<?php
+require_once( '../classes/Admon.php' );
+session_start();
+if( isset( $_SESSION['admon'] ) ){
+}else{
+	header( 'Location: ..');
+}
+?>
       <div class="navbar-wrapper">
       <div class="container">
 
@@ -42,7 +49,7 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <li class="active"><a href="index.php">Inicio</a></li>
+                <li><a href="index.php">Inicio</a></li>
 				<li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Cuentas <span class="caret"></span></a>
                   <ul class="dropdown-menu">
@@ -71,7 +78,7 @@
 					<li><a href="redirect_prestamos_visualizar.php">Visualizar</a></li>
                   </ul>
                 </li>
-				<li><a href="perfil.php">Mi Perfil</a></li>
+				<li class="active"><a href="perfil.php">Mi Perfil</a></li>
 				<li><a href="db_logout.php">Cerrar sesión</a></li>
               </ul>
             </div>
@@ -81,41 +88,40 @@
       </div>
     </div>
 	
-    <div class="container">
+	<div class="container">
 	
 	  <div class="row">
 		<div class="col-lg-5 col-centered">
-			<h4>Usuario: usuario</h4>
+			<h4>Usuario: 
+<?php
+	echo unserialize($_SESSION['admon'])->usuarioActual->getNombreCompleto();
+?>
+			</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
-	  
-	  <div class="row">
-        <div class="col-lg-5 col-centered">
-			<h2 class="sub-header">Seguros contratados</h2>
-			  <div class="table-responsive">
-				<table class="table table-striped">
-				  <thead>
-					<tr>
-					  <th>#</th>
-					  <th>Cuenta</th>
-					  <th>Seguro</th>
-					  <th>Fecha contrato</th>
-					  <th>Monto</th>
-					</tr>
-				  </thead>
-				  <tbody>
-					<tr>
-					  <td>1</td>
-					  <td>5522215</td>
-					  <td>Automóvil</td>
-					  <td>22/06/2015</td>
-					  <td>Q 500.00</td>
-					</tr>
-				  </tbody>
-				</table>
-			  </div>
-		  </div><!-- /.col-lg-4 -->
-      </div><!-- /.row -->
+		
+	<div class="row">
+		<form class="form-horizontal">
+			<h2>Mi Perfil</h2>
+			<img class="img-circle" src="../images/user_worker.png" width="140" height="140">
+			<div class="form-group">
+<?php
+	$admon = unserialize( $_SESSION['admon'] );
+	$usuario = $admon->usuarioActual;
+	echo "<p><strong>ID:</strong> ".$usuario->id."</p>";
+	echo "<p><strong>Usuario:</strong> ".$usuario->usuario."</p>";
+	echo "<p><strong>Contraseña:</strong> ".$usuario->password."</p>";
+	echo "<p><strong>Nombre:</strong> ".$usuario->nombre."</p>";
+	echo "<p><strong>Apellido:</strong> ".$usuario->apellido."</p>";
+	echo "<p><strong>Teléfono:</strong> ".$usuario->telefono."</p>";
+	echo "<p><strong>Dirección:</strong> ".$usuario->direccion."</p>";
+	echo "<p><strong>Email:</strong> ".$usuario->email."</p>";
+	echo "<p><strong>Fecha registro:</strong> ".$usuario->fechaRegistro."</p>";
+	echo "<p><strong>Número de identificación:</strong> ".$usuario->numDocIdentificacion."</p>";
+?>
+			</div>
+		</form><!-- /.col-lg-4 -->
+	</div><!-- /.row -->
 
 	  <footer>
         <p>&copy; 2015 Banco, BitBat &middot; <a href="#">Privacidad</a> &middot; <a href="#">Términos</a></p>

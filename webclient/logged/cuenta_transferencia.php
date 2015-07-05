@@ -73,11 +73,12 @@ if( isset( $_SESSION['admon'] ) ){
 				<li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Préstamos <span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="prestamo_solicitar_monto.php">Solicitar</a></li>
+                    <li><a href="redirect_prestamo_solicitar.php">Solicitar</a></li>
                     <li><a href="prestamo_pagar.php">Realizar pago</a></li>
-					<li><a href="prestamos_visualizar.php">Visualizar</a></li>
+					<li><a href="redirect_prestamos_visualizar.php">Visualizar</a></li>
                   </ul>
                 </li>
+				<li><a href="perfil.php">Mi Perfil</a></li>
 				<li><a href="db_logout.php">Cerrar sesión</a></li>
               </ul>
             </div>
@@ -118,6 +119,12 @@ if( isset( $_SESSION['admon'] ) ){
 		<p>Indica la cuenta destino:</p>
 		<label for="inputNumCuentaSecundaria" class="sr-only">Cuenta destino</label>
         <input type="number" step="1" id="inputNumCuentaSecundaria" name="numCuentaSec" class="form-control" placeholder="Cuenta destino" required>
+		<p>Banco de la cuenta destino: </p>
+		<select class="form-control" id="inputBanco" name="banco">
+			<option>PHP</option>
+			<option>Java</option>
+			<option>ASP</option>
+		</select>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Realizar transferencia</button>
       </form>
 

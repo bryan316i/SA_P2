@@ -73,11 +73,12 @@ if( isset( $_SESSION['admon'] ) ){
 				<li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Préstamos <span class="caret"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="prestamo_solicitar_monto.php">Solicitar</a></li>
+                    <li><a href="redirect_prestamo_solicitar.php">Solicitar</a></li>
                     <li><a href="prestamo_pagar.php">Realizar pago</a></li>
-					<li><a href="prestamos_visualizar.php">Visualizar</a></li>
+					<li><a href="redirect_prestamos_visualizar.php">Visualizar</a></li>
                   </ul>
                 </li>
+				<li><a href="perfil.php">Mi Perfil</a></li>
 				<li><a href="db_logout.php">Cerrar sesión</a></li>
               </ul>
             </div>
@@ -98,14 +99,51 @@ if( isset( $_SESSION['admon'] ) ){
 			</h4>
 		</div><!-- /.col-lg-4 -->
 	  </div><!-- /.row -->
-		
+	  
+	  <div class="row">
+		<div class="col-lg-6 col-centered">
+			<h2 class="sub-header">Préstamos disponibles</h2>
+			  <div class="table-responsive">
+				<table class="table table-striped">
+				  <thead>
+					<tr>
+					  <th>#</th>
+					  <th>Rango</th>
+					  <th>Tasa de interés</th>
+					  <th>Cantidad cuotas</th>
+					</tr>
+				  </thead>
+				  <tbody>
+<?php
+	require_once('../classes/Admon.php');
+	//mostrar informacion
+	$admon = unserialize( $_SESSION['admon'] );
+	$admon->actualizarTiposPrestamo();
+	$i=1;
+	foreach( $admon->listaTipoPrestamo as $prestamo ){
+		echo '<tr>';
+		echo '<td>' . $i . '</td>';
+		echo '<td>Q' . number_format( $prestamo->min , 0, '.', ',' ). ' a Q'.  number_format( $prestamo->max , 0, '.', ',' ) .'</td>';
+		echo '<td>' . number_format( $prestamo->tasaInteres, 2 ). '%</td>';
+		echo '<td>' . $prestamo->cantidadCuotas . '</td>';
+		echo '</tr>';
+		$i++;
+	}
+?>
+				  </tbody>
+				</table>
+				<p>NOTA: la cantidad de cuotas es en meses</p>
+			  </div>
+		  </div><!-- /.col-lg-4 -->
+	  </div><!-- /.row -->
+
 	  <form action="prestamo_solicitar.php" method="post">
         <h2 class="form-heading">Solicita un préstamo</h2>
         <label for="inputMonto" class="sr-only">Monto</label>
         <input type="number" step="0.01" id="inputMonto" name="monto" class="form-control" placeholder="Monto a solicitar" required autofocus>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Continuar</button>
       </form>
-
+	  
 	  <footer>
         <p>&copy; 2015 Banco, BitBat &middot; <a href="#">Privacidad</a> &middot; <a href="#">Términos</a></p>
       </footer>

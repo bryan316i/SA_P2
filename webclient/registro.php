@@ -38,11 +38,11 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="index.html">BitBat</a>
+              <a class="navbar-brand" href="index.php">BitBat</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-                <li><a href="index.html">Inicio</a></li>
+                <li><a href="index.php">Inicio</a></li>
 				<li class="active"><a href="registro.php">Registro</a></li>
                 <li><a href="acercade.html">Acerca de</a></li>
                 <li><a href="contactanos.html">Contáctanos</a></li>
@@ -83,6 +83,12 @@ for( $i=0; $i<count( $admon->listaDocIdentificacion ); $i++ ){
 		</select>
 		<label for="inputNumDocIdentificacion" class="sr-only">Documento de identificación</label>
 		<input type="number" id="inputNumDocIdentificacion" name="numDocIdentif" class="form-control" placeholder="Número de documento" required>
+		<p>Banco: </p>
+		<select class="form-control" id="inputBanco" name="banco">
+			<option>PHP</option>
+			<option>Java</option>
+			<option>ASP</option>
+		</select>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Registrarse</button>
       </form>
 

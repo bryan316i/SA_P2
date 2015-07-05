@@ -13,6 +13,7 @@ if( $monto < 100 ){
 	session_start();
 	$admon = unserialize( $_SESSION['admon'] );
 	$resultado = $admon->usuarioActual->crearCuenta( $monto );
+	echo "Cuentas: ".count( $admon->usuarioActual->strListaCuenta );
 	if( $resultado[0] == 1 ){
 		//$admon->usuarioActual->actualizarCuentas();
 		//realizar deposito
@@ -27,7 +28,14 @@ if( $monto < 100 ){
 		$admon->usuarioActual->actualizarCuentas();
 		$cuenta = $admon->usuarioActual->getCuenta( $resultado[1] );
 		//echo 'dddd'.$resultado[1];
-		$resultado = $cuenta->depositar( $admon->usuarioActual->usuario, $monto );
+		if( strcmp( $_SESSION['banco'], "PHP" ) == 0 ){
+			$resultado = $cuenta->depositar( $admon->usuarioActual->usuario, $monto );
+		}elseif( strcmp( $_SESSION['banco'], "ASP" ) == 0 ){
+			$resultado = array( 1, $resultado[1] );
+		}else{
+			//PENDIENTE
+		}
+		$_SESSION['admon'] = serialize( $admon );
 		if( $resultado[0] == 1 ){
 			//$admon->usuarioActual->actualizarCuentas();
 			//mensaje y redirigir
@@ -38,7 +46,7 @@ if( $monto < 100 ){
 		}else{
 			//mensaje y redirigir
 			echo '<script language="javascript">';
-			echo 'alert( "Cuenta creada con éxito'.$resultado[1].'" );';
+			echo 'alert( "Cuenta creada con éxito. Depósito pendiente. '.$resultado[1].'" );';
 			echo 'window.location = "cuenta_deposito.php"';
 			echo '</script>';
 		}
